@@ -1,0 +1,30 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  runtime             = "nodejs"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Instance-wide settings (design §4.6). A single row with id = 1.
+/// Secrets (SMTP, Google) stay in environment variables, never here.
+model InstanceSettings {
+  id                       Int      @id @default(1)
+  /// null = unlimited (the self-hosted default)
+  defaultStorageQuotaBytes BigInt?  @map("default_storage_quota_bytes")
+  /// null = unlimited (the self-hosted default)
+  defaultMemberCap         Int?     @map("default_member_cap")
+  /// Max upload size per file kind, in bytes, e.g. { "video": 209715200 }
+  uploadLimits             Json     @default("{}") @map("upload_limits")
+  /// "all" | "images" | "off"
+  mediaProcessing          String   @default("images") @map("media_processing")
+  catalogueEnabled         Boolean  @default(true) @map("catalogue_enabled")
+  createdAt                DateTime @default(now()) @map("created_at")
+  updatedAt                DateTime @updatedAt @map("updated_at")
+
+  @@map("instance_settings")
+}

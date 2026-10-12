@@ -1,0 +1,28 @@
+# Local development services only. The production stack (deploy/docker-compose.yml) comes in step 1.1 #9.
+name: studybook-dev
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: studybook
+      POSTGRES_PASSWORD: studybook
+      POSTGRES_DB: studybook
+    ports:
+      - "5432:5432"
+    volumes:
+      # postgres:18 images keep data under /var/lib/postgresql/<major>/docker
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U studybook"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  valkey:
+    image: valkey/valkey:9.1-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres-data:
