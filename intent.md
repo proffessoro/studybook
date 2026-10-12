@@ -1,6 +1,6 @@
 # Intent: Studybook — accountable, monetizable learning communities
 
-> Status: **v0.6, ready for Phase 1** (2026-10-08). All Phase 1 questions are answered. Statements marked **[ASSUMPTION]** still need confirmation; see *Open questions* (mostly Phase 2).
+> Status: **v0.7, ready for Phase 1** (2026-10-08). All Phase 1 questions are answered. Statements marked **[ASSUMPTION]** still need confirmation; see *Open questions* (mostly Phase 2).
 
 ## Problem
 
@@ -20,6 +20,8 @@ Studybook is an **open-source (AGPL) community platform**, available as a **mobi
 
 - **Create** any number of communities (groups) and organise their content: **text, PDF, audio, and video** lessons and resources, tasks, and discussions.
 - **Manage** members: invitations, roles, access levels, and moderation.
+- **Get discovered (optional):** groups are invite-only by default. A leader can also list a group in a public **catalogue by interest** on our domain, where people can send a join request.
+- **Discuss** inside the group with a built-in feed, so members don't have to go back to WhatsApp.
 - **Track follow-through:** see who acted on each task and who completed it (details below).
 - **Monetize** a group with **one-time entry fees, monthly subscriptions, and paid courses**, all at the same time if the leader wants (details below).
 
@@ -157,10 +159,10 @@ v1 is the complete first version of the app, and it is built in **three phases**
 - **Languages:** French and English.
 
 **Accounts and privacy**
-- **Accounts:** email and phone number are both required at sign-up. Email is the main login, and Google login is available after that.
+- **Accounts:** email and phone number are both required **and verified** at first sign-up (SMS through a paid third-party provider). Email is the main login, and Google login is available after that.
 - **Privacy:**
-  - Members can see **only the names** of other members, never their contact details.
-  - **Leaders (and admins) can see their own members' contact details.**
+  - Members see other members only by **pseudo and avatar**, never their real name or contact details.
+  - **Only leaders** see their own members' real names and contact details. Moderators don't.
 - **Regulation:** follow Cameroon's personal data protection law. The payment design relies on Maviance as a licensed aggregator [ASSUMPTION: needs legal check].
 
 **Team**
