@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { InstanceInfo } from '@studybook/shared';
+import { env } from '../config/env.js';
 import { ApiZodResponse } from '../openapi/zod-openapi.js';
 
 @ApiTags('instance')
@@ -14,7 +15,7 @@ export class InstanceController {
       name: process.env.INSTANCE_NAME ?? 'Studybook',
       version: process.env.APP_VERSION ?? '0.0.0',
       features: {
-        googleLogin: Boolean(process.env.GOOGLE_CLIENT_ID),
+        googleLogin: env.google.enabled,
         catalogue: true,
       },
     };

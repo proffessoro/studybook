@@ -105,7 +105,8 @@
       "INVALID_CREDENTIALS": "Wrong email or password.",
       "ACCOUNT_SUSPENDED": "This account is suspended. Contact the administrator of this server.",
       "RESET_LINK_INVALID": "This link has expired or was already used.",
-      "WRONG_PASSWORD": "This password is wrong."
+      "WRONG_PASSWORD": "This password is wrong.",
+      "GOOGLE_SIGNUP_EXPIRED": "This step has expired. Please start again with Google."
     }
   },
   "Login": {
@@ -118,7 +119,9 @@
     "notVerified": "Your email isn't verified yet. Enter the code we emailed you, or ask for a new one.",
     "verifyNow": "Verify my email",
     "noAccount": "No account yet? <link>Sign up</link>",
-    "forgot": "Forgot your password?"
+    "forgot": "Forgot your password?",
+    "googleFailed": "Google login did not work. Please try again.",
+    "googleSuspended": "This account is suspended. Contact the administrator of this server."
   },
   "ForgotPassword": {
     "title": "Forgot your password?",
@@ -160,5 +163,16 @@
     "confirmEmail": "Confirm my new email",
     "startAgain": "Use another address",
     "emailChanged": "Your email is now"
+  },
+  "Google": {
+    "continue": "Continue with Google",
+    "or": "or",
+    "signupTitle": "Finish creating your account",
+    "signupIntro": "Google confirmed your email. Choose a pseudo and add your phone number.",
+    "connectedAs": "Google account:",
+    "loading": "Loading…",
+    "expired": "This step has expired. Please start again with Google.",
+    "startAgain": "Start again with Google",
+    "useEmail": "Sign up with an email instead"
   }
 }

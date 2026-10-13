@@ -105,7 +105,8 @@
       "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
       "ACCOUNT_SUSPENDED": "Ce compte est suspendu. Contactez l'administrateur de ce serveur.",
       "RESET_LINK_INVALID": "Ce lien a expiré ou a déjà été utilisé.",
-      "WRONG_PASSWORD": "Ce mot de passe est incorrect."
+      "WRONG_PASSWORD": "Ce mot de passe est incorrect.",
+      "GOOGLE_SIGNUP_EXPIRED": "Cette étape a expiré. Recommencez avec Google."
     }
   },
   "Login": {
@@ -118,7 +119,9 @@
     "notVerified": "Votre email n'est pas encore vérifié. Saisissez le code reçu par email, ou demandez-en un nouveau.",
     "verifyNow": "Vérifier mon email",
     "noAccount": "Pas encore de compte ? <link>Inscrivez-vous</link>",
-    "forgot": "Mot de passe oublié ?"
+    "forgot": "Mot de passe oublié ?",
+    "googleFailed": "La connexion avec Google n'a pas fonctionné. Veuillez réessayer.",
+    "googleSuspended": "Ce compte est suspendu. Contactez l'administrateur de ce serveur."
   },
   "ForgotPassword": {
     "title": "Mot de passe oublié ?",
@@ -160,5 +163,16 @@
     "confirmEmail": "Confirmer mon nouvel email",
     "startAgain": "Utiliser une autre adresse",
     "emailChanged": "Votre email est maintenant"
+  },
+  "Google": {
+    "continue": "Continuer avec Google",
+    "or": "ou",
+    "signupTitle": "Terminer la création de votre compte",
+    "signupIntro": "Google a confirmé votre email. Choisissez un pseudo et ajoutez votre numéro de téléphone.",
+    "connectedAs": "Compte Google :",
+    "loading": "Chargement…",
+    "expired": "Cette étape a expiré. Recommencez avec Google.",
+    "startAgain": "Recommencer avec Google",
+    "useEmail": "S'inscrire plutôt avec un email"
   }
 }

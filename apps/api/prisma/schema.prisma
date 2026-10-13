@@ -71,6 +71,7 @@ model User {
   updatedAt            DateTime           @updatedAt @map("updated_at")
   verificationCodes    VerificationCode[]
   sessions             Session[]
+  oauthAccounts        OAuthAccount[]
 
   @@map("users")
 }
@@ -135,4 +136,26 @@ model Session {
 
   @@index([userId])
   @@map("sessions")
+}
+
+enum OAuthProvider {
+  google
+
+  @@map("oauth_provider")
+}
+
+/// Design §4.1. Links a user to their account at an identity provider (ACC-04).
+model OAuthAccount {
+  id             String        @id @default(uuid(7)) @db.Uuid
+  userId         String        @map("user_id") @db.Uuid
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider       OAuthProvider
+  /// The provider's stable id for the person (Google's `sub`), which survives email changes
+  providerUserId String        @map("provider_user_id")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  @@unique([provider, providerUserId])
+  @@unique([userId, provider])
+  @@map("oauth_accounts")
 }

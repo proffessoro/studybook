@@ -22,6 +22,20 @@ export const env = {
   trustProxy: process.env.TRUST_PROXY === 'true',
   /** Run the background worker inside the API process (handy in development and on tiny servers) */
   workerInProcess: process.env.WORKER_IN_PROCESS === 'true',
+  /**
+   * Google login (ACC-04), on only when both client values are set. Read on
+   * each use, so tests can point the issuer at a fake provider.
+   */
+  get google() {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    return {
+      enabled: Boolean(clientId && clientSecret),
+      clientId: clientId ?? '',
+      clientSecret: clientSecret ?? '',
+      issuer: process.env.GOOGLE_ISSUER ?? 'https://accounts.google.com',
+    };
+  },
   smtp: {
     host: process.env.SMTP_HOST ?? 'localhost',
     port: Number(process.env.SMTP_PORT ?? 1025),

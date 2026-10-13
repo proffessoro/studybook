@@ -382,6 +382,76 @@
         ]
       }
     },
+    "/api/v1/auth/google/signup": {
+      "get": {
+        "operationId": "GoogleController_draft",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "What Google told us, to prefill the form",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleSignupDraft"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "post": {
+        "operationId": "GoogleController_complete",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteGoogleSignupInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Account created and logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Me"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/api/v1/me/email": {
       "post": {
         "operationId": "ProfileController_requestEmailChange",
@@ -495,6 +565,7 @@
               "VERIFICATION_CODE_INVALID",
               "VERIFICATION_CODE_EXPIRED",
               "RESET_LINK_INVALID",
+              "GOOGLE_SIGNUP_EXPIRED",
               "GROUP_FULL",
               "TASK_DEADLINE_PASSED",
               "TASK_NOT_APPLICABLE",
@@ -837,6 +908,63 @@
         },
         "required": [
           "code"
+        ],
+        "additionalProperties": false
+      },
+      "GoogleSignupDraft": {
+        "$id": "#/components/schemas/GoogleSignupDraft",
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "fullName"
+        ],
+        "additionalProperties": false
+      },
+      "CompleteGoogleSignupInput": {
+        "$id": "#/components/schemas/CompleteGoogleSignupInput",
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "pseudo": {
+            "type": "string",
+            "pattern": "^[\\p{L}\\p{N}_.-]{3,30}$"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+237[26]\\d{8}$"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "fr",
+              "en"
+            ]
+          },
+          "acceptPrivacy": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        },
+        "required": [
+          "fullName",
+          "pseudo",
+          "phone",
+          "locale",
+          "acceptPrivacy"
         ],
         "additionalProperties": false
       },
