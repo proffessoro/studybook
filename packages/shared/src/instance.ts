@@ -11,5 +11,5 @@ export const InstanceInfo = z.object({
     googleLogin: z.boolean(),
     catalogue: z.boolean(),
   }),
-});
+}).meta({ id: 'InstanceInfo' });
 export type InstanceInfo = z.infer<typeof InstanceInfo>;

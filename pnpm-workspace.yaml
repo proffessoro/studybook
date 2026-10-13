@@ -4,6 +4,8 @@ packages:
 
 # Packages allowed to run install scripts (pnpm blocks all others).
 allowBuilds:
+  # Install-time download analytics, pulled in by swagger-ui-dist.
+  '@scarf/scarf': false
   '@parcel/watcher': true
   '@prisma/engines': true
   '@swc/core': true

@@ -1,0 +1,163 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The API and its database are up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatus"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "instance"
+        ]
+      }
+    },
+    "/api/v1/instance": {
+      "get": {
+        "operationId": "InstanceController_info",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Instance name, version, and enabled features",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstanceInfo"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "instance"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Studybook API",
+    "description": "",
+    "version": "0.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "ApiError": {
+        "$id": "#/components/schemas/ApiError",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "VALIDATION_FAILED",
+              "BAD_REQUEST",
+              "UNAUTHENTICATED",
+              "FORBIDDEN",
+              "NOT_FOUND",
+              "RATE_LIMITED",
+              "GROUP_FULL",
+              "TASK_DEADLINE_PASSED",
+              "TASK_NOT_APPLICABLE",
+              "STORAGE_QUOTA_EXCEEDED",
+              "INTERNAL_ERROR"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "InstanceInfo": {
+        "$id": "#/components/schemas/InstanceInfo",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "features": {
+            "type": "object",
+            "properties": {
+              "googleLogin": {
+                "type": "boolean"
+              },
+              "catalogue": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "googleLogin",
+              "catalogue"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "name",
+          "version",
+          "features"
+        ],
+        "additionalProperties": false
+      },
+      "HealthStatus": {
+        "$id": "#/components/schemas/HealthStatus",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}
