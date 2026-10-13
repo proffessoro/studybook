@@ -89,7 +89,8 @@ enum VerificationPurpose {
   @@map("verification_purpose")
 }
 
-/// One-time codes sent to a user. Stored hashed, short expiry, limited attempts.
+/// One-time codes (email verification) and link tokens (password reset) sent to a user.
+/// Stored hashed, short expiry, limited attempts.
 model VerificationCode {
   id         String              @id @default(uuid(7)) @db.Uuid
   userId     String              @map("user_id") @db.Uuid
@@ -106,6 +107,8 @@ model VerificationCode {
   updatedAt  DateTime            @updatedAt @map("updated_at")
 
   @@index([userId, purpose])
+  /// Reset links are looked up by their token's hash
+  @@index([codeHash])
   @@map("verification_codes")
 }
 

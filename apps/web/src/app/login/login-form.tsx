@@ -53,6 +53,9 @@ export function LoginForm({ email: initialEmail, next }: { email: string; next: 
       <FormField id="password" label={t('password')}>
         <Input id="password" name="password" type="password" autoComplete="current-password" required />
       </FormField>
+      <Link href="/forgot-password" className="-mt-3 self-end text-sm underline underline-offset-2">
+        {t('forgot')}
+      </Link>
 
       {error && (
         <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">

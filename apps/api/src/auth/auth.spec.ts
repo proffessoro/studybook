@@ -17,7 +17,7 @@ const signUpBody = {
 describe('sign-up and email verification (ACC-01)', () => {
   let t: TestApp;
   const post = (path: string, body: object) => request(t.app.getHttpServer()).post(`/api/v1/auth${path}`).send(body);
-  const codeFor = (email: string) => t.outbox.lastTo(email)?.data.code ?? '';
+  const codeFor = (email: string) => t.outbox.last(email, 'verify-email')?.data.code ?? '';
 
   beforeAll(async () => {
     t = await createTestApp();
@@ -50,7 +50,7 @@ describe('sign-up and email verification (ACC-01)', () => {
       expect(user.privacyAcceptedAt).toBeInstanceOf(Date);
       expect(user.passwordHash).toMatch(/^\$argon2id\$/);
 
-      const email = t.outbox.lastTo('ama@example.cm');
+      const email = t.outbox.last('ama@example.cm', 'verify-email');
       expect(email).toMatchObject({ locale: 'en', template: 'verify-email', data: { pseudo: 'Ama_K' } });
       expect(email?.data.code).toMatch(/^\d{6}$/);
       expect(email?.data.link).toBe(

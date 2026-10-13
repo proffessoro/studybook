@@ -74,4 +74,9 @@ export class Sessions {
   async revoke(token: string): Promise<void> {
     await this.prisma.session.deleteMany({ where: { tokenHash: hashToken(token) } });
   }
+
+  /** Logs the user out everywhere, e.g. after a password reset. */
+  async revokeAll(userId: string): Promise<void> {
+    await this.prisma.session.deleteMany({ where: { userId } });
+  }
 }

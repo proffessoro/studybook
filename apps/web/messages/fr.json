@@ -97,7 +97,8 @@
       "network": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.",
       "unknown": "Un problème est survenu. Veuillez réessayer.",
       "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
-      "ACCOUNT_SUSPENDED": "Ce compte est suspendu. Contactez l'administrateur de ce serveur."
+      "ACCOUNT_SUSPENDED": "Ce compte est suspendu. Contactez l'administrateur de ce serveur.",
+      "RESET_LINK_INVALID": "Ce lien a expiré ou a déjà été utilisé."
     }
   },
   "Login": {
@@ -109,6 +110,28 @@
     "fillBoth": "Saisissez votre email et votre mot de passe.",
     "notVerified": "Votre email n'est pas encore vérifié. Saisissez le code reçu par email, ou demandez-en un nouveau.",
     "verifyNow": "Vérifier mon email",
-    "noAccount": "Pas encore de compte ? <link>Inscrivez-vous</link>"
+    "noAccount": "Pas encore de compte ? <link>Inscrivez-vous</link>",
+    "forgot": "Mot de passe oublié ?"
+  },
+  "ForgotPassword": {
+    "title": "Mot de passe oublié ?",
+    "intro": "Saisissez l'email de votre compte. Nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+    "email": "Email",
+    "submit": "Envoyer le lien",
+    "submitting": "Envoi…",
+    "sent": "Si un compte utilise {email}, un lien arrive. Il expire dans 1 heure. Pensez à regarder dans les spams.",
+    "backToLogin": "Retour à la connexion"
+  },
+  "ResetPassword": {
+    "title": "Choisir un nouveau mot de passe",
+    "password": "Nouveau mot de passe",
+    "passwordHint": "Au moins 8 caractères",
+    "submit": "Enregistrer mon mot de passe",
+    "submitting": "Enregistrement…",
+    "done": "Votre mot de passe est changé.",
+    "doneNext": "Par sécurité, vous avez été déconnecté sur tous vos appareils. Connectez-vous avec votre nouveau mot de passe.",
+    "login": "Se connecter",
+    "linkInvalid": "Ce lien a expiré ou a déjà été utilisé.",
+    "newLink": "Recevoir un nouveau lien"
   }
 }

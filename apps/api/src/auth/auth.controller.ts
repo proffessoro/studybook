@@ -5,7 +5,9 @@ import type { z } from 'zod';
 import {
   LoginInput,
   Me,
+  RecoverInput,
   ResendVerificationInput,
+  ResetPasswordInput,
   SignUpInput,
   SignUpResult,
   VerifyEmailInput,
@@ -75,5 +77,24 @@ export class AuthController {
   async logout(@Req() request: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply): Promise<void> {
     await this.auth.logout(sessionToken(request));
     clearSessionCookie(reply);
+  }
+
+  @Post('recover')
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiZodBody(RecoverInput)
+  @ApiResponse({ status: 202, description: 'A reset link was emailed if the address has an active account' })
+  async recover(@Body(new ZodValidationPipe(RecoverInput)) body: z.output<typeof RecoverInput>, @Ip() ip: string): Promise<void> {
+    await this.auth.requestPasswordReset(body, ip);
+  }
+
+  @Post('recover/confirm')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiZodBody(ResetPasswordInput)
+  @ApiResponse({ status: 204, description: 'Password changed; every session was ended' })
+  async resetPassword(
+    @Body(new ZodValidationPipe(ResetPasswordInput)) body: z.output<typeof ResetPasswordInput>,
+    @Ip() ip: string,
+  ): Promise<void> {
+    await this.auth.resetPassword(body, ip);
   }
 }
