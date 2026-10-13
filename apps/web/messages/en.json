@@ -118,7 +118,9 @@
       "GROUP_FULL": "This group is full.",
       "INVITE_INVALID": "This invite link no longer works.",
       "BANNED_FROM_GROUP": "You can't join this group.",
-      "REQUEST_ALREADY_DECIDED": "This request was already answered."
+      "REQUEST_ALREADY_DECIDED": "This request was already answered.",
+      "LEADER_MUST_TRANSFER": "Hand over leadership to another member before leaving.",
+      "CANNOT_MANAGE_LEADER": "The leader can only hand over leadership."
     }
   },
   "Login": {
@@ -209,7 +211,8 @@
     "languageLabel": "Language of the group",
     "languageLabelHint": "Shown as a label, e.g. \"Français\" or \"English\". Each member still sees Studybook in their own language.",
     "createSubmit": "Create the group",
-    "creating": "Creating…"
+    "creating": "Creating…",
+    "membersLink": "Members ({count})"
   },
   "GroupSettings": {
     "title": "Group settings",
@@ -276,5 +279,29 @@
     "reject": "Refuse",
     "acceptLabel": "Accept {pseudo}",
     "rejectLabel": "Refuse {pseudo}"
+  },
+  "Members": {
+    "title": "Members",
+    "you": "you",
+    "actionsFor": "Actions for {pseudo}",
+    "makeModerator": "Make moderator",
+    "makeMember": "Make member",
+    "transfer": "Hand over leadership",
+    "transferTitle": "Hand over leadership to {pseudo}",
+    "transferConfirm": "{pseudo} becomes the leader, with full control. You stay in the group as a moderator.",
+    "transferYes": "Hand over",
+    "remove": "Remove from the group",
+    "removeTitle": "Remove {pseudo}",
+    "removeConfirm": "{pseudo} leaves the group. They can come back with the invite link.",
+    "removeYes": "Remove",
+    "ban": "Ban from the group",
+    "banTitle": "Ban {pseudo}",
+    "banConfirm": "{pseudo} leaves the group and can't come back, with the link or a request.",
+    "banYes": "Ban",
+    "cancel": "Cancel",
+    "leave": "Leave the group",
+    "leaveTitle": "Leave the group",
+    "leaveConfirm": "You will no longer see the group. Your past submissions stay visible to the leader.",
+    "leaveYes": "Leave"
   }
 }

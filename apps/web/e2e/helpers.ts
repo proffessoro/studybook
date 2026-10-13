@@ -92,3 +92,15 @@ export async function emailedSubjects(request: APIRequestContext, email: string)
   const { messages } = (await res.json()) as { messages: { Subject: string }[] };
   return messages.map((m) => m.Subject);
 }
+
+/**
+ * An API session for `email`, sending the app's Origin like a browser does
+ * (the CSRF check needs it for cookie-authenticated changes).
+ */
+export async function apiSession(playwright: { request: { newContext: (options: object) => Promise<APIRequestContext> } }, email: string) {
+  const baseURL = 'http://localhost:3000';
+  const context = await playwright.request.newContext({ baseURL, extraHTTPHeaders: { origin: baseURL } });
+  const res = await context.post('/api/v1/auth/login', { data: { email, password: PASSWORD } });
+  expect(res.status()).toBe(200);
+  return context;
+}

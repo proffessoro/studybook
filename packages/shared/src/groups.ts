@@ -129,3 +129,34 @@ export const DecideJoinRequestInput = z
   .object({ decision: z.enum(['accept', 'reject']) })
   .meta({ id: 'DecideJoinRequestInput' });
 export type DecideJoinRequestInput = z.input<typeof DecideJoinRequestInput>;
+
+/**
+ * A member as another member sees them (MEM-01): pseudo and role only.
+ * `contact` is filled for the leader alone; the API never sends it to others (NFR-06).
+ * The avatar comes with file storage (step 1.4).
+ */
+export const MemberView = z
+  .object({
+    userId: z.string(),
+    pseudo: z.string(),
+    role: GroupRoleSchema,
+    contact: z
+      .object({ fullName: z.string(), email: z.string(), phone: z.string().nullable(), joinedAt: z.string() })
+      .nullable(),
+  })
+  .meta({ id: 'MemberView' });
+export type MemberView = z.infer<typeof MemberView>;
+
+export const MemberList = z.object({ members: z.array(MemberView) }).meta({ id: 'MemberList' });
+export type MemberList = z.infer<typeof MemberList>;
+
+/** MEM-02: promote to moderator or back to member. Leadership moves with `TransferLeadershipInput`. */
+export const ChangeRoleInput = z.object({ role: z.enum(['moderator', 'member']) }).meta({ id: 'ChangeRoleInput' });
+export type ChangeRoleInput = z.input<typeof ChangeRoleInput>;
+
+export const TransferLeadershipInput = z.object({ userId: z.string() }).meta({ id: 'TransferLeadershipInput' });
+export type TransferLeadershipInput = z.input<typeof TransferLeadershipInput>;
+
+/** MEM-03: `ban` also stops them from coming back by link or request. */
+export const RemoveMemberInput = z.object({ ban: z.boolean().default(false) }).meta({ id: 'RemoveMemberInput' });
+export type RemoveMemberInput = z.input<typeof RemoveMemberInput>;
