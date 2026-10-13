@@ -36,13 +36,61 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_signUp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/verify-email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_verifyEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/verify-email/resend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_resendVerification"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         ApiError: {
             /** @enum {string} */
-            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "GROUP_FULL" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
+            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "GROUP_FULL" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
             message: string;
             details?: {
                 [key: string]: unknown;
@@ -55,6 +103,34 @@ export interface components {
                 googleLogin: boolean;
                 catalogue: boolean;
             };
+        };
+        SignUpInput: {
+            fullName: string;
+            pseudo: string;
+            /** Format: email */
+            email: string;
+            phone: string;
+            password: string;
+            /** @enum {string} */
+            locale: "fr" | "en";
+            /** @enum {boolean} */
+            acceptPrivacy: true;
+        };
+        SignUpResult: {
+            email: string;
+        };
+        VerifyEmailInput: {
+            /** Format: email */
+            email: string;
+            code: string;
+        };
+        VerifyEmailResult: {
+            /** @enum {string} */
+            status: "verified";
+        };
+        ResendVerificationInput: {
+            /** Format: email */
+            email: string;
         };
         HealthStatus: {
             /** @enum {string} */
@@ -115,6 +191,103 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["InstanceInfo"];
                 };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    AuthController_signUp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SignUpInput"];
+            };
+        };
+        responses: {
+            /** @description Account created; a verification code was emailed */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SignUpResult"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    AuthController_verifyEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerifyEmailInput"];
+            };
+        };
+        responses: {
+            /** @description Email verified, account active */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerifyEmailResult"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    AuthController_resendVerification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResendVerificationInput"];
+            };
+        };
+        responses: {
+            /** @description A new code was sent if the address has a pending account */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Error */
             default: {

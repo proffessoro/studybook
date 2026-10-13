@@ -28,3 +28,82 @@ model InstanceSettings {
 
   @@map("instance_settings")
 }
+
+enum Locale {
+  fr
+  en
+
+  @@map("locale")
+}
+
+enum UserStatus {
+  /// Signed up, email not verified yet
+  pending
+  active
+  suspended
+  deleted
+
+  @@map("user_status")
+}
+
+/// Design §4.1. A user becomes `active` once the email is verified (ACC-01).
+model User {
+  id                   String             @id @default(uuid(7)) @db.Uuid
+  fullName             String             @map("full_name")
+  /// Public nickname, unique ignoring case
+  pseudo               String             @unique @db.Citext
+  /// Unique ignoring case
+  email                String             @unique @db.Citext
+  emailVerifiedAt      DateTime?          @map("email_verified_at")
+  /// E.164, e.g. +237677123456. Null only while a Google sign-up is unfinished
+  phone                String?            @unique
+  /// Always null in Phase 1 (no SMS), kept for Phase 2
+  phoneVerifiedAt      DateTime?          @map("phone_verified_at")
+  /// argon2id. Null for Google-only accounts
+  passwordHash         String?            @map("password_hash")
+  locale               Locale             @default(fr)
+  isInstanceAdmin      Boolean            @default(false) @map("is_instance_admin")
+  status               UserStatus         @default(pending)
+  /// Consent to the privacy policy at sign-up (NFR-07)
+  privacyAcceptedAt    DateTime?          @map("privacy_accepted_at")
+  privacyPolicyVersion String?            @map("privacy_policy_version")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  verificationCodes    VerificationCode[]
+
+  @@map("users")
+}
+
+enum VerificationChannel {
+  email
+
+  @@map("verification_channel")
+}
+
+enum VerificationPurpose {
+  verify
+  recover
+  change
+
+  @@map("verification_purpose")
+}
+
+/// One-time codes sent to a user. Stored hashed, short expiry, limited attempts.
+model VerificationCode {
+  id         String              @id @default(uuid(7)) @db.Uuid
+  userId     String              @map("user_id") @db.Uuid
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel    VerificationChannel @default(email)
+  purpose    VerificationPurpose
+  codeHash   String              @map("code_hash")
+  /// The address the code was sent to
+  target     String
+  expiresAt  DateTime            @map("expires_at")
+  attempts   Int                 @default(0)
+  consumedAt DateTime?           @map("consumed_at")
+  createdAt  DateTime            @default(now()) @map("created_at")
+  updatedAt  DateTime            @updatedAt @map("updated_at")
+
+  @@index([userId, purpose])
+  @@map("verification_codes")
+}

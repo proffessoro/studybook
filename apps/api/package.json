@@ -26,7 +26,11 @@
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
     "@studybook/shared": "workspace:*",
+    "argon2": "0.45.1",
+    "bullmq": "6.3.12",
     "dotenv": "18.0.7",
+    "ioredis": "6.0.0",
+    "nodemailer": "10.1.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
     "zod": "4.6.5"

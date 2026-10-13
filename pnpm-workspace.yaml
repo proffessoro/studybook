@@ -7,7 +7,11 @@ allowBuilds:
   # Install-time download analytics, pulled in by swagger-ui-dist.
   '@scarf/scarf': false
   '@parcel/watcher': true
+  # Loads (or builds) the native argon2 binding used for password hashing.
+  argon2: true
   '@prisma/engines': true
+  # Optional native speed-up for BullMQ's msgpackr; the JS fallback is fine.
+  msgpackr-extract: false
   '@swc/core': true
   prisma: true
   # Only picks a native binary, which already comes as an optional dependency.

@@ -5,9 +5,10 @@ import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fa
 import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module.js';
 import { configureApp } from './app.setup.js';
+import { env } from './config/env.js';
 import { buildOpenApiDocument } from './openapi/document.js';
 
-const app = configureApp(await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter()));
+const app = configureApp(await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter({ trustProxy: env.trustProxy })));
 app.enableShutdownHooks();
 
 SwaggerModule.setup('api/v1/docs', app, buildOpenApiDocument(app), {
