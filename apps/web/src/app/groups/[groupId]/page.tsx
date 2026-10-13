@@ -5,7 +5,8 @@ import { notFound, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { SettingsIcon, UsersIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getGroup, getInviteLink, getJoinRequests, getMe } from '@/lib/server-api';
+import { getCourses, getGroup, getInviteLink, getJoinRequests, getMe } from '@/lib/server-api';
+import { CoursesSection } from './courses-section';
 import { InvitePanel } from './invite-panel';
 import { JoinRequests } from './join-requests';
 import { LeaveGroup } from './leave-group';
@@ -26,6 +27,8 @@ export default async function GroupPage({ params }: Props) {
   if (!group) notFound();
   const t = await getTranslations('Groups');
   const manages = group.myRole === 'leader' && group.status === 'active';
+  const managesContent = (group.myRole === 'leader' || group.myRole === 'moderator') && group.status === 'active';
+  const courses = await getCourses(group.id);
   const [invite, requests] = manages ? await Promise.all([getInviteLink(group.id), getJoinRequests(group.id)]) : [null, []];
   // The invite link uses the address people opened the site with (Caddy sets the forwarded headers).
   const h = await headers();
@@ -62,6 +65,7 @@ export default async function GroupPage({ params }: Props) {
           {t('membersLink', { count: group.memberCount })}
         </Link>
       </Button>
+      <CoursesSection groupId={group.id} courses={courses} manages={managesContent} />
       {manages && <JoinRequests groupId={group.id} requests={requests} />}
       {invite && <InvitePanel groupId={group.id} groupName={group.name} token={invite.token} origin={origin} />}
       {group.myRole !== 'leader' && <LeaveGroup groupId={group.id} />}

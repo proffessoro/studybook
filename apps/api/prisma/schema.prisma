@@ -219,6 +219,7 @@ model Group {
   categories             GroupCategory[]
   tags                   GroupTag[]
   files                  File[]
+  courses                Course[]
 
   @@index([ownerId])
   @@index([visibility, status])
@@ -398,4 +399,53 @@ model File {
   @@index([groupId])
   @@index([status, reservedUntil])
   @@map("files")
+}
+
+/// CNT-01. An ordered set of modules holding lessons. Becomes sellable in Phase 2 (a future price column).
+model Course {
+  id          String         @id @default(uuid(7)) @db.Uuid
+  groupId     String         @map("group_id") @db.Uuid
+  group       Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  title       String
+  description String         @default("")
+  position    Int            @default(0)
+  /// Drafts are hidden from members
+  published   Boolean        @default(false)
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  modules     CourseModule[]
+
+  @@index([groupId, position])
+  @@map("courses")
+}
+
+model CourseModule {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  courseId  String   @map("course_id") @db.Uuid
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  position  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  lessons   Lesson[]
+
+  @@index([courseId, position])
+  @@map("modules")
+}
+
+/// CNT-02. The body is rich text stored as checked JSON (never raw HTML).
+model Lesson {
+  id        String       @id @default(uuid(7)) @db.Uuid
+  moduleId  String       @map("module_id") @db.Uuid
+  module    CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title     String
+  body      Json         @default("{\"type\":\"doc\",\"content\":[]}")
+  position  Int          @default(0)
+  /// Drafts are hidden from members
+  published Boolean      @default(false)
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+
+  @@index([moduleId, position])
+  @@map("lessons")
 }

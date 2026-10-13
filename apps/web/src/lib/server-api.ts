@@ -122,3 +122,36 @@ export const getCatalogueGroup = cache(async (slug: string) => {
   });
   return data ?? null;
 });
+
+/** The group's courses (members see published ones). */
+export async function getCourses(groupId: string) {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/groups/{groupId}/courses', {
+    params: { path: { groupId } },
+    headers: { cookie: cookieHeader },
+    cache: 'no-store',
+  });
+  return data?.courses ?? [];
+}
+
+/** A course with its modules and lessons, or null. */
+export async function getCourseOutline(groupId: string, courseId: string) {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/groups/{groupId}/courses/{courseId}', {
+    params: { path: { groupId, courseId } },
+    headers: { cookie: cookieHeader },
+    cache: 'no-store',
+  });
+  return data ?? null;
+}
+
+/** A lesson, or null. */
+export const getLesson = cache(async (groupId: string, lessonId: string) => {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/groups/{groupId}/lessons/{lessonId}', {
+    params: { path: { groupId, lessonId } },
+    headers: { cookie: cookieHeader },
+    cache: 'no-store',
+  });
+  return data ?? null;
+});

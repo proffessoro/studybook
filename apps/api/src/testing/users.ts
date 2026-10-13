@@ -41,6 +41,7 @@ export async function loginAs(app: NestFastifyApplication, email: string) {
     get: (path: string) => as(request(server).get(`/api/v1${path}`)),
     post: (path: string, body: object = {}) => as(request(server).post(`/api/v1${path}`)).send(body),
     patch: (path: string, body: object = {}) => as(request(server).patch(`/api/v1${path}`)).send(body),
+    put: (path: string, body: object = {}) => as(request(server).put(`/api/v1${path}`)).send(body),
     delete: (path: string, body: object = {}) => as(request(server).delete(`/api/v1${path}`)).send(body),
   };
 }

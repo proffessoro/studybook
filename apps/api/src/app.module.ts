@@ -3,6 +3,7 @@ import { AdminModule } from './admin/admin.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { CatalogueModule } from './catalogue/catalogue.module.js';
 import { env } from './config/env.js';
+import { ContentModule } from './content/content.module.js';
 import { GroupsModule } from './groups/groups.module.js';
 import { HealthController } from './health/health.controller.js';
 import { InstanceController } from './instance/instance.controller.js';
@@ -13,7 +14,7 @@ import { UsersModule } from './users/users.module.js';
 import { WorkerModule } from './worker.module.js';
 
 @Module({
-  imports: [PrismaModule, RedisModule, AuthModule, UsersModule, GroupsModule, CatalogueModule, AdminModule, StorageModule, ...(env.workerInProcess ? [WorkerModule] : [])],
+  imports: [PrismaModule, RedisModule, AuthModule, UsersModule, GroupsModule, CatalogueModule, AdminModule, StorageModule, ContentModule, ...(env.workerInProcess ? [WorkerModule] : [])],
   controllers: [HealthController, InstanceController],
 })
 export class AppModule {}
