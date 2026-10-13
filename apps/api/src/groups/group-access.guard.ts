@@ -67,7 +67,9 @@ export class GroupAccessGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest<GroupRequest>();
     const groupId = (request.params as Record<string, string>).groupId ?? '';
-    if (!request.user || !UUID.test(groupId)) throw notFound();
+    // A wiring mistake, not a visitor error: SessionGuard must run first (put it on the controller class).
+    if (!request.user) throw new Error('GroupAccessGuard ran before SessionGuard');
+    if (!UUID.test(groupId)) throw notFound();
 
     const membership = await this.prisma.membership.findUnique({
       where: { groupId_userId: { groupId, userId: request.user.id } },

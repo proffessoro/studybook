@@ -74,6 +74,8 @@ model User {
   oauthAccounts        OAuthAccount[]
   ownedGroups          Group[]
   memberships          Membership[]
+  createdInvites       InviteLink[]
+  joinRequests         JoinRequest[]
 
   @@map("users")
 }
@@ -211,6 +213,8 @@ model Group {
   createdAt              DateTime           @default(now()) @map("created_at")
   updatedAt              DateTime           @updatedAt @map("updated_at")
   memberships            Membership[]
+  inviteLinks            InviteLink[]
+  joinRequests           JoinRequest[]
 
   @@index([ownerId])
   @@map("groups")
@@ -252,4 +256,53 @@ model Membership {
   @@unique([groupId, userId])
   @@index([userId, status])
   @@map("memberships")
+}
+
+/// GRP-03. One active link per group; resetting deactivates the old one.
+model InviteLink {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  groupId     String   @map("group_id") @db.Uuid
+  group       Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  /// Random and unguessable; the link is /join/<token>
+  token       String   @unique
+  active      Boolean  @default(true)
+  createdById String   @map("created_by") @db.Uuid
+  createdBy   User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([groupId, active])
+  @@map("invite_links")
+}
+
+enum JoinRequestSource {
+  catalogue
+  invite
+
+  @@map("join_request_source")
+}
+
+enum JoinRequestStatus {
+  pending
+  accepted
+  rejected
+
+  @@map("join_request_status")
+}
+
+/// MEM-04. From the catalogue, or from the invite link when approval is on.
+model JoinRequest {
+  id        String            @id @default(uuid(7)) @db.Uuid
+  groupId   String            @map("group_id") @db.Uuid
+  group     Group             @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId    String            @map("user_id") @db.Uuid
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source    JoinRequestSource
+  status    JoinRequestStatus @default(pending)
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+
+  @@index([groupId, status])
+  @@index([userId])
+  @@map("join_requests")
 }

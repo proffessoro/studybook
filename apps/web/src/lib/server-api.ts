@@ -53,3 +53,36 @@ export const getGroup = cache(async (groupId: string) => {
   });
   return data ?? null;
 });
+
+/** What an invite link leads to, for the visitor (logged in or not), or null when the link no longer works. */
+export async function getInvitePreview(token: string) {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/invites/{token}', {
+    params: { path: { token } },
+    headers: { cookie: cookieHeader },
+    cache: 'no-store',
+  });
+  return data ?? null;
+}
+
+/** The group's invite link (leader only), or null. */
+export async function getInviteLink(groupId: string) {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/groups/{groupId}/invite-link', {
+    params: { path: { groupId } },
+    headers: { cookie: cookieHeader },
+    cache: 'no-store',
+  });
+  return data ?? null;
+}
+
+/** Pending join requests (leader only). */
+export async function getJoinRequests(groupId: string) {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/groups/{groupId}/join-requests', {
+    params: { path: { groupId } },
+    headers: { cookie: cookieHeader },
+    cache: 'no-store',
+  });
+  return data?.requests ?? [];
+}

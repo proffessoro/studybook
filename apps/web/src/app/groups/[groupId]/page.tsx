@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { SettingsIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getGroup, getMe } from '@/lib/server-api';
+import { getGroup, getInviteLink, getJoinRequests, getMe } from '@/lib/server-api';
+import { InvitePanel } from './invite-panel';
+import { JoinRequests } from './join-requests';
 
 type Props = { params: Promise<{ groupId: string }> };
 
@@ -21,6 +24,11 @@ export default async function GroupPage({ params }: Props) {
   const group = await getGroup(groupId);
   if (!group) notFound();
   const t = await getTranslations('Groups');
+  const manages = group.myRole === 'leader' && group.status === 'active';
+  const [invite, requests] = manages ? await Promise.all([getInviteLink(group.id), getJoinRequests(group.id)]) : [null, []];
+  // The invite link uses the address people opened the site with (Caddy sets the forwarded headers).
+  const h = await headers();
+  const origin = `${h.get('x-forwarded-proto') ?? 'http'}://${h.get('x-forwarded-host') ?? h.get('host')}`;
 
   return (
     <main className="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-8">
@@ -47,6 +55,8 @@ export default async function GroupPage({ params }: Props) {
         )}
       </div>
       {group.description && <p className="whitespace-pre-line">{group.description}</p>}
+      {manages && <JoinRequests groupId={group.id} requests={requests} />}
+      {invite && <InvitePanel groupId={group.id} groupName={group.name} token={invite.token} origin={origin} />}
     </main>
   );
 }

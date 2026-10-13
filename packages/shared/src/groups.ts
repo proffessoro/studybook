@@ -79,3 +79,53 @@ export type MyGroup = z.infer<typeof MyGroup>;
 
 export const MyGroups = z.object({ groups: z.array(MyGroup) }).meta({ id: 'MyGroups' });
 export type MyGroups = z.infer<typeof MyGroups>;
+
+/** The group's current invite link (GRP-03). */
+export const InviteLinkView = z
+  .object({ token: z.string(), createdAt: z.string() })
+  .meta({ id: 'InviteLinkView' });
+export type InviteLinkView = z.infer<typeof InviteLinkView>;
+
+/**
+ * What someone opening an invite link sees, logged in or not. `viewer` says
+ * where they stand: null when logged out.
+ */
+export const InvitePreview = z
+  .object({
+    groupName: z.string(),
+    description: z.string(),
+    memberCount: z.number(),
+    requiresApproval: z.boolean(),
+    /** LIM-02: "This group is full" */
+    full: z.boolean(),
+    viewer: z.enum(['none', 'member', 'pending', 'banned']).nullable(),
+    /** Set for members, to go straight to the group */
+    groupId: z.string().nullable(),
+  })
+  .meta({ id: 'InvitePreview' });
+export type InvitePreview = z.infer<typeof InvitePreview>;
+
+/** `joined`: a member now. `requested`: waiting for the leader (MEM-04). */
+export const JoinResult = z
+  .object({ status: z.enum(['joined', 'requested']), groupId: z.string() })
+  .meta({ id: 'JoinResult' });
+export type JoinResult = z.infer<typeof JoinResult>;
+
+/** A pending join request, as the leader sees it (MEM-01: the leader sees contacts). */
+export const JoinRequestView = z
+  .object({
+    id: z.string(),
+    source: z.enum(['catalogue', 'invite']),
+    createdAt: z.string(),
+    user: z.object({ pseudo: z.string(), fullName: z.string(), email: z.string(), phone: z.string().nullable() }),
+  })
+  .meta({ id: 'JoinRequestView' });
+export type JoinRequestView = z.infer<typeof JoinRequestView>;
+
+export const JoinRequestList = z.object({ requests: z.array(JoinRequestView) }).meta({ id: 'JoinRequestList' });
+export type JoinRequestList = z.infer<typeof JoinRequestList>;
+
+export const DecideJoinRequestInput = z
+  .object({ decision: z.enum(['accept', 'reject']) })
+  .meta({ id: 'DecideJoinRequestInput' });
+export type DecideJoinRequestInput = z.input<typeof DecideJoinRequestInput>;

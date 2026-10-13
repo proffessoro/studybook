@@ -4,12 +4,15 @@ import { RateLimitModule } from '../rate-limit/rate-limit.module.js';
 import { GroupAccessGuard } from './group-access.guard.js';
 import { GroupsController } from './groups.controller.js';
 import { GroupsService } from './groups.service.js';
+import { InvitePreviewController, InvitesController } from './invites.controller.js';
+import { InvitesService } from './invites.service.js';
+import { MembershipsService } from './memberships.service.js';
 
-/** Groups and their settings (GRP-01, 02, 05). Invites, members, and the catalogue join in the next steps. */
+/** Groups, settings, invites, and joining (GRP-01, 02, 03, 05, MEM-04, LIM-02). Members and the catalogue come next. */
 @Module({
   imports: [AuthModule, RateLimitModule],
-  controllers: [GroupsController],
-  providers: [GroupsService, GroupAccessGuard],
-  exports: [GroupsService, GroupAccessGuard],
+  controllers: [GroupsController, InvitesController, InvitePreviewController],
+  providers: [GroupsService, GroupAccessGuard, InvitesService, MembershipsService],
+  exports: [GroupsService, GroupAccessGuard, MembershipsService],
 })
 export class GroupsModule {}

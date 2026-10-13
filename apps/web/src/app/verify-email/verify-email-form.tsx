@@ -18,10 +18,12 @@ export function VerifyEmailForm({
   email: initialEmail,
   code: initialCode,
   justSent,
+  next,
 }: {
   email: string;
   code: string;
   justSent: boolean;
+  next: string;
 }) {
   const t = useTranslations('VerifyEmail');
   const messages = useApiErrorMessages();
@@ -84,7 +86,7 @@ export function VerifyEmailForm({
         <p className="text-lg font-medium">{t('verified')}</p>
         <p className="text-muted-foreground">{t('verifiedNext')}</p>
         <Button size="lg" asChild>
-          <Link href={`/login?${new URLSearchParams({ email })}`}>{t('login')}</Link>
+          <Link href={`/login?${new URLSearchParams({ email, next })}`}>{t('login')}</Link>
         </Button>
       </div>
     );
