@@ -341,6 +341,127 @@
         "tags": [
           "auth"
         ]
+      },
+      "patch": {
+        "operationId": "ProfileController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Me"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/me/email": {
+      "post": {
+        "operationId": "ProfileController_requestEmailChange",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeEmailInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "A code was emailed to the new address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeEmailResult"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/me/email/confirm": {
+      "post": {
+        "operationId": "ProfileController_confirmEmailChange",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmEmailChangeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The email is changed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Me"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "profile"
+        ]
       }
     }
   },
@@ -365,6 +486,7 @@
               "BAD_REQUEST",
               "UNAUTHENTICATED",
               "INVALID_CREDENTIALS",
+              "WRONG_PASSWORD",
               "EMAIL_NOT_VERIFIED",
               "ACCOUNT_SUSPENDED",
               "FORBIDDEN",
@@ -640,6 +762,81 @@
         "required": [
           "token",
           "password"
+        ],
+        "additionalProperties": false
+      },
+      "UpdateProfileInput": {
+        "$id": "#/components/schemas/UpdateProfileInput",
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "pseudo": {
+            "type": "string",
+            "pattern": "^[\\p{L}\\p{N}_.-]{3,30}$"
+          },
+          "phone": {
+            "type": "string",
+            "pattern": "^\\+237[26]\\d{8}$"
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "fr",
+              "en"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ChangeEmailInput": {
+        "$id": "#/components/schemas/ChangeEmailInput",
+        "type": "object",
+        "properties": {
+          "newEmail": {
+            "type": "string",
+            "format": "email",
+            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "newEmail",
+          "password"
+        ],
+        "additionalProperties": false
+      },
+      "ChangeEmailResult": {
+        "$id": "#/components/schemas/ChangeEmailResult",
+        "type": "object",
+        "properties": {
+          "newEmail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "newEmail"
+        ],
+        "additionalProperties": false
+      },
+      "ConfirmEmailChangeInput": {
+        "$id": "#/components/schemas/ConfirmEmailChangeInput",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^\\d{6}$"
+          }
+        },
+        "required": [
+          "code"
         ],
         "additionalProperties": false
       },

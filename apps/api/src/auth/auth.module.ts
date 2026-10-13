@@ -12,6 +12,6 @@ import { VerificationCodes } from './verification-codes.js';
   imports: [NotifyModule, RateLimitModule],
   controllers: [AuthController, MeController],
   providers: [AuthService, VerificationCodes, Sessions, SessionGuard],
-  exports: [Sessions, SessionGuard],
+  exports: [Sessions, SessionGuard, VerificationCodes],
 })
 export class AuthModule {}

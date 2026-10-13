@@ -1,9 +1,10 @@
 'use client';
 
 import { useTransition } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { LogOutIcon, UserIcon } from 'lucide-react';
+import { LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -15,7 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { api } from '@/lib/api';
 
-/** The logged-in user's pseudo, with logging out. */
+/** The logged-in user's pseudo, with their profile and logging out. */
 export function UserMenu({ pseudo }: { pseudo: string }) {
   const t = useTranslations('Nav');
   const router = useRouter();
@@ -40,6 +41,12 @@ export function UserMenu({ pseudo }: { pseudo: string }) {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel className="truncate">{pseudo}</DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/profile">
+            <SettingsIcon aria-hidden />
+            {t('profile')}
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem onSelect={logout}>
           <LogOutIcon aria-hidden />
           {t('logout')}

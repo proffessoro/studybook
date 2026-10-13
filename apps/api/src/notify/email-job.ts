@@ -6,6 +6,8 @@ export const EMAIL_QUEUE = 'email';
 export type EmailJob = { to: string; locale: Locale } & (
   | { template: 'verify-email'; data: { pseudo: string; code: string; link: string } }
   | { template: 'reset-password'; data: { pseudo: string; link: string } }
+  | { template: 'confirm-email-change'; data: { pseudo: string; code: string } }
+  | { template: 'email-changed'; data: { pseudo: string; newEmail: string } }
 );
 
 /** Where the API puts emails to send. Tests swap in a fake. */

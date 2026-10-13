@@ -36,10 +36,11 @@ export class VerificationCodes {
   }
 
   /**
-   * Uses up the code if it matches. Throws `VERIFICATION_CODE_INVALID` for a wrong code
-   * and `VERIFICATION_CODE_EXPIRED` when it timed out or ran out of attempts.
+   * Uses up the code if it matches and returns the address it was sent to.
+   * Throws `VERIFICATION_CODE_INVALID` for a wrong code and
+   * `VERIFICATION_CODE_EXPIRED` when it timed out or ran out of attempts.
    */
-  async consume(userId: string, purpose: VerificationPurpose, code: string): Promise<void> {
+  async consume(userId: string, purpose: VerificationPurpose, code: string): Promise<{ target: string }> {
     const current = await this.prisma.verificationCode.findFirst({
       where: { userId, purpose, consumedAt: null },
       orderBy: { createdAt: 'desc' },
@@ -62,6 +63,7 @@ export class VerificationCodes {
       data: { consumedAt: new Date() },
     });
     if (count === 0) throw invalid();
+    return { target: current.target };
   }
 
   /** A random token for a link. Long enough that guessing is hopeless, so it needs no attempt counter. */

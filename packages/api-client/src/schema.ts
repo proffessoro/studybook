@@ -161,6 +161,38 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
+        patch: operations["ProfileController_update"];
+        trace?: never;
+    };
+    "/api/v1/me/email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ProfileController_requestEmailChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/email/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ProfileController_confirmEmailChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
         patch?: never;
         trace?: never;
     };
@@ -170,7 +202,7 @@ export interface components {
     schemas: {
         ApiError: {
             /** @enum {string} */
-            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "INVALID_CREDENTIALS" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_SUSPENDED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "RESET_LINK_INVALID" | "GROUP_FULL" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
+            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "INVALID_CREDENTIALS" | "WRONG_PASSWORD" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_SUSPENDED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "RESET_LINK_INVALID" | "GROUP_FULL" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
             message: string;
             details?: {
                 [key: string]: unknown;
@@ -234,6 +266,24 @@ export interface components {
         ResetPasswordInput: {
             token: string;
             password: string;
+        };
+        UpdateProfileInput: {
+            fullName?: string;
+            pseudo?: string;
+            phone?: string;
+            /** @enum {string} */
+            locale?: "fr" | "en";
+        };
+        ChangeEmailInput: {
+            /** Format: email */
+            newEmail: string;
+            password: string;
+        };
+        ChangeEmailResult: {
+            newEmail: string;
+        };
+        ConfirmEmailChangeInput: {
+            code: string;
         };
         HealthStatus: {
             /** @enum {string} */
@@ -535,6 +585,105 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description The logged-in user */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    ProfileController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateProfileInput"];
+            };
+        };
+        responses: {
+            /** @description The updated profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    ProfileController_requestEmailChange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeEmailInput"];
+            };
+        };
+        responses: {
+            /** @description A code was emailed to the new address */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChangeEmailResult"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    ProfileController_confirmEmailChange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmEmailChangeInput"];
+            };
+        };
+        responses: {
+            /** @description The email is changed */
             200: {
                 headers: {
                     [name: string]: unknown;

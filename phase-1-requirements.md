@@ -26,7 +26,7 @@ Leader signs up → creates group → invites members → publishes a lesson + t
 | **Visitor** | Not logged in | View the landing page and the group catalogue, sign up, log in, open an invite link |
 | **Member** | One group | View content, submit proof, take quizzes, see their own progress (and others' scores if the leader allows), post and comment in the feed |
 | **Moderator** | One group | Everything a member can do, plus **create and edit content** (courses, lessons, tasks, quizzes) and **moderate** (hide, delete, or pin posts and comments). **No** access to member contacts, the dashboard, members' proof, or member management |
-| **Leader (owner)** | One group | Everything: content and tasks, dashboard and members' proof, member contacts, invitations, join requests, roles, group settings, deleting the group |
+| **Leader** | One group | Everything: content and tasks, dashboard and members' proof, member contacts, invitations, join requests, roles, group settings, deleting the group |
 | **Instance admin** | Whole server | Configure the instance (limits, email, Google login, storage) and manage users. On hosted, this is us; on self-hosted, the self-hoster |
 
 Any user can be a leader of some groups and a member of others.
@@ -224,11 +224,6 @@ Priority: **M** = Must for Phase 1, **S** = Should (included unless time runs ou
 - **The deadline is final.** Once it has passed, no one (including the leader) can reopen submission or change the deadline.
 - Before the deadline, the leader can still change it.
 
-**TSK-07 (M): Late joiners don't inherit earlier tasks**
-*As a member who joins after tasks were published, I only see the courses and the feed for what came before me.*
-- Tasks published **before** the member joined are hidden from that member: they don't appear in their task list, and they aren't counted as Missed on the dashboard or in their completion rate.
-- Tasks published after the member joined apply normally.
-
 **TSK-04 (M): Edit or replace a submission**
 *As a member, I want to replace my proof before the deadline.*
 - The latest submission replaces the previous one. The leader sees the latest version and the time it was submitted.
@@ -239,6 +234,11 @@ Priority: **M** = Must for Phase 1, **S** = Should (included unless time runs ou
 
 **TSK-06 (M): Member task list**
 *As a member, I want to see my tasks grouped as To do, Completed, and Missed, with deadlines shown.*
+
+**TSK-07 (M): Late joiners don't inherit earlier tasks**
+*As a member who joins after tasks were published, I only see the courses and the feed for what came before me.*
+- Tasks published **before** the member joined are hidden from that member: they don't appear in their task list, and they aren't counted as Missed on the dashboard or in their completion rate.
+- Tasks published after the member joined apply normally.
 
 ### 4.6 Quizzes (QUZ)
 

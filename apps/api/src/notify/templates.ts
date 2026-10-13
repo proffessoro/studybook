@@ -51,6 +51,52 @@ The link expires in 1 hour and works once. If you didn't ask for this, ignore th
   }),
 };
 
+const confirmEmailChange: Record<Locale, (d: DataOf<'confirm-email-change'>) => RenderedEmail> = {
+  fr: ({ pseudo, code }) => ({
+    subject: `${code} confirme votre nouvel email Studybook`,
+    text: `Bonjour ${pseudo},
+
+Pour utiliser cette adresse sur votre compte Studybook, saisissez ce code : ${code}
+
+Le code expire dans 30 minutes. Si vous n'avez rien demandé, ignorez cet email.`,
+    html: layout(
+      `<p>Bonjour ${escapeHtml(pseudo)},</p><p>Pour utiliser cette adresse sur votre compte Studybook, saisissez ce code :</p>${codeBlock(code)}<p style="color:#666">Le code expire dans 30 minutes. Si vous n'avez rien demandé, ignorez cet email.</p>`,
+    ),
+  }),
+  en: ({ pseudo, code }) => ({
+    subject: `${code} confirms your new Studybook email`,
+    text: `Hello ${pseudo},
+
+To use this address on your Studybook account, enter this code: ${code}
+
+The code expires in 30 minutes. If you didn't ask for this, ignore this email.`,
+    html: layout(
+      `<p>Hello ${escapeHtml(pseudo)},</p><p>To use this address on your Studybook account, enter this code:</p>${codeBlock(code)}<p style="color:#666">The code expires in 30 minutes. If you didn't ask for this, ignore this email.</p>`,
+    ),
+  }),
+};
+
+const emailChanged: Record<Locale, (d: DataOf<'email-changed'>) => RenderedEmail> = {
+  fr: ({ pseudo, newEmail }) => ({
+    subject: 'Votre email Studybook a changé',
+    text: `Bonjour ${pseudo},
+
+L'email de votre compte Studybook est maintenant ${newEmail}. Si ce n'est pas vous, contactez tout de suite l'administrateur de votre serveur Studybook.`,
+    html: layout(
+      `<p>Bonjour ${escapeHtml(pseudo)},</p><p>L'email de votre compte Studybook est maintenant <strong>${escapeHtml(newEmail)}</strong>.</p><p>Si ce n'est pas vous, contactez tout de suite l'administrateur de votre serveur Studybook.</p>`,
+    ),
+  }),
+  en: ({ pseudo, newEmail }) => ({
+    subject: 'Your Studybook email was changed',
+    text: `Hello ${pseudo},
+
+Your Studybook account's email is now ${newEmail}. If this wasn't you, contact the administrator of your Studybook server right away.`,
+    html: layout(
+      `<p>Hello ${escapeHtml(pseudo)},</p><p>Your Studybook account's email is now <strong>${escapeHtml(newEmail)}</strong>.</p><p>If this wasn't you, contact the administrator of your Studybook server right away.</p>`,
+    ),
+  }),
+};
+
 function linkButton(link: string, label: string): string {
   return `<p><a href="${escapeHtml(link)}" style="display:inline-block;background:#111;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">${escapeHtml(label)}</a></p>`;
 }
@@ -69,5 +115,9 @@ export function renderEmail(job: EmailJob): RenderedEmail {
       return verifyEmail[job.locale](job.data);
     case 'reset-password':
       return resetPassword[job.locale](job.data);
+    case 'confirm-email-change':
+      return confirmEmailChange[job.locale](job.data);
+    case 'email-changed':
+      return emailChanged[job.locale](job.data);
   }
 }
