@@ -12,7 +12,8 @@
     "login": "Log in",
     "logout": "Log out",
     "account": "Account of {pseudo}",
-    "profile": "My profile"
+    "profile": "My profile",
+    "groups": "My groups"
   },
   "LanguageSwitcher": {
     "label": "Change language",
@@ -93,6 +94,10 @@
         "invalid_format": "Enter a valid email address.",
         "taken": "An account already uses this email.",
         "same": "This is already your email."
+      },
+      "name": {
+        "too_small": "Use at least 3 characters.",
+        "too_big": "Use at most 80 characters."
       }
     },
     "api": {
@@ -106,7 +111,10 @@
       "ACCOUNT_SUSPENDED": "This account is suspended. Contact the administrator of this server.",
       "RESET_LINK_INVALID": "This link has expired or was already used.",
       "WRONG_PASSWORD": "This password is wrong.",
-      "GOOGLE_SIGNUP_EXPIRED": "This step has expired. Please start again with Google."
+      "GOOGLE_SIGNUP_EXPIRED": "This step has expired. Please start again with Google.",
+      "GROUP_ARCHIVED": "This group is archived, so nothing can be changed.",
+      "FORBIDDEN": "You're not allowed to do this.",
+      "NOT_FOUND": "This page no longer exists."
     }
   },
   "Login": {
@@ -174,5 +182,58 @@
     "expired": "This step has expired. Please start again with Google.",
     "startAgain": "Start again with Google",
     "useEmail": "Sign up with an email instead"
+  },
+  "Groups": {
+    "title": "My groups",
+    "create": "Create a group",
+    "emptyTitle": "You're not in any group yet.",
+    "emptyText": "Create one and invite people, or open an invite link someone shared with you.",
+    "roles": {
+      "leader": "Leader",
+      "moderator": "Moderator",
+      "member": "Member"
+    },
+    "memberCount": "{count, plural, one {# member} other {# members}}",
+    "archived": "Archived",
+    "archivedNotice": "This group is archived: you can read everything, but nothing can be changed.",
+    "settings": "Settings",
+    "newTitle": "Create a group",
+    "newIntro": "You will be its leader. You can change all of this later.",
+    "name": "Name",
+    "description": "Description",
+    "descriptionHint": "What the group is about, and what members will do.",
+    "languageLabel": "Language of the group",
+    "languageLabelHint": "Shown as a label, e.g. \"Français\" or \"English\". Each member still sees Studybook in their own language.",
+    "createSubmit": "Create the group",
+    "creating": "Creating…"
+  },
+  "GroupSettings": {
+    "title": "Group settings",
+    "visibility": "Who can find the group",
+    "visibilityPrivate": "Private",
+    "visibilityPrivateHint": "Only people with the invite link can join.",
+    "visibilityListed": "Listed in the catalogue",
+    "visibilityListedHint": "Anyone can see its name and description and ask to join. You accept or refuse.",
+    "progressVisibility": "What members see of progress",
+    "progressOwn": "Only their own progress",
+    "progressAll": "Everyone's points",
+    "progressAllHint": "A points board with pseudos only. Never names, contacts, or proof.",
+    "inviteApproval": "Approve people who use the invite link",
+    "inviteApprovalHint": "Otherwise they join right away.",
+    "feedEnabled": "Group feed",
+    "feedEnabledHint": "Members can post and comment.",
+    "save": "Save the settings",
+    "saving": "Saving…",
+    "saved": "Settings saved.",
+    "archivedReadOnly": "This group is archived, so its settings are read-only. Unarchive it to change them.",
+    "dangerZone": "Archive or delete",
+    "archiveHint": "Archiving makes the group read-only. You can undo it at any time.",
+    "archive": "Archive the group",
+    "unarchiveHint": "Unarchiving lets members act in the group again.",
+    "unarchive": "Unarchive the group",
+    "deleteHint": "Deleting removes the group, its content, and its members for good.",
+    "deleteConfirm": "To delete, type the group name: {name}",
+    "delete": "Delete the group for good",
+    "deleteMismatch": "The name does not match."
   }
 }

@@ -35,3 +35,21 @@ export const getMe = cache(async () => {
     return null;
   }
 });
+
+/** The groups the logged-in user belongs to. */
+export async function getMyGroups() {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/me/groups', { headers: { cookie: cookieHeader }, cache: 'no-store' });
+  return data?.groups ?? [];
+}
+
+/** A group as the logged-in user sees it, or null when it doesn't exist or they aren't a member. */
+export const getGroup = cache(async (groupId: string) => {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/groups/{groupId}', {
+    params: { path: { groupId } },
+    headers: { cookie: cookieHeader },
+    cache: 'no-store',
+  });
+  return data ?? null;
+});

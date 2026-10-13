@@ -212,13 +212,93 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["GroupsController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GroupsController_mine"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{groupId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GroupsController_view"];
+        put?: never;
+        post?: never;
+        delete: operations["GroupsController_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["GroupsController_update"];
+        trace?: never;
+    };
+    "/api/v1/groups/{groupId}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["GroupsController_archive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{groupId}/unarchive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["GroupsController_unarchive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         ApiError: {
             /** @enum {string} */
-            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "INVALID_CREDENTIALS" | "WRONG_PASSWORD" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_SUSPENDED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "RESET_LINK_INVALID" | "GOOGLE_SIGNUP_EXPIRED" | "GROUP_FULL" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
+            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "INVALID_CREDENTIALS" | "WRONG_PASSWORD" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_SUSPENDED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "RESET_LINK_INVALID" | "GOOGLE_SIGNUP_EXPIRED" | "GROUP_FULL" | "GROUP_ARCHIVED" | "CONFIRMATION_MISMATCH" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
             message: string;
             details?: {
                 [key: string]: unknown;
@@ -313,6 +393,62 @@ export interface components {
             locale: "fr" | "en";
             /** @enum {boolean} */
             acceptPrivacy: true;
+        };
+        CreateGroupInput: {
+            name: string;
+            /** @default  */
+            description: string;
+            languageLabel?: string;
+        };
+        UpdateGroupInput: {
+            name?: string;
+            description?: string;
+            /** @enum {string} */
+            visibility?: "private" | "listed";
+            inviteRequiresApproval?: boolean;
+            /** @enum {string} */
+            progressVisibility?: "own" | "all";
+            feedEnabled?: boolean;
+            languageLabel?: string;
+        };
+        DeleteGroupInput: {
+            confirmName: string;
+        };
+        GroupView: {
+            id: string;
+            slug: string;
+            name: string;
+            description: string;
+            /** @enum {string} */
+            visibility: "private" | "listed";
+            inviteRequiresApproval: boolean;
+            /** @enum {string} */
+            progressVisibility: "own" | "all";
+            feedEnabled: boolean;
+            languageLabel: string | null;
+            /** @enum {string} */
+            status: "active" | "archived";
+            memberCount: number;
+            memberCap: number | null;
+            /** @enum {string} */
+            myRole: "leader" | "moderator" | "member";
+            storage: {
+                usedBytes: number;
+                quotaBytes: number | null;
+            } | null;
+            createdAt: string;
+        };
+        MyGroup: {
+            id: string;
+            name: string;
+            /** @enum {string} */
+            status: "active" | "archived";
+            /** @enum {string} */
+            myRole: "leader" | "moderator" | "member";
+            memberCount: number;
+        };
+        MyGroups: {
+            groups: components["schemas"]["MyGroup"][];
         };
         HealthStatus: {
             /** @enum {string} */
@@ -781,6 +917,229 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Me"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    GroupsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateGroupInput"];
+            };
+        };
+        responses: {
+            /** @description Group created; you are its leader */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupView"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    GroupsController_mine: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The groups you belong to */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyGroups"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    GroupsController_view: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The group, as you see it */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupView"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    GroupsController_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteGroupInput"];
+            };
+        };
+        responses: {
+            /** @description Group deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    GroupsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateGroupInput"];
+            };
+        };
+        responses: {
+            /** @description Settings saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupView"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    GroupsController_archive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The group is read-only */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupView"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    GroupsController_unarchive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The group is active again */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupView"];
                 };
             };
             /** @description Error */
