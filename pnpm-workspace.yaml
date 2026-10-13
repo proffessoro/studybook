@@ -1,0 +1,14 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Packages allowed to run install scripts (pnpm blocks all others).
+allowBuilds:
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  '@swc/core': true
+  prisma: true
+
+# Keep transitive dependencies off releases that are only hours old.
+overrides:
+  '@swc/core': 1.16.13
