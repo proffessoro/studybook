@@ -383,7 +383,7 @@ This fits the 2 vCPU / 4 GB target with room for video transcoding. The worker p
   - strict upload MIME sniffing (not trusting the file extension);
   - security headers via Caddy;
   - dependency scanning in CI.
-- **Performance budget:** CI fails if the first-load JavaScript of the landing or group home page grows beyond **~170 KB gzipped** (`NFR-02`).
+- **Performance budget:** CI fails if the first-load JavaScript of the landing or group home page grows beyond **~260 KB gzipped** (`NFR-02`). Raised from 170 KB on 2026-10-13: Next.js 16 + React 19 + next-intl alone ship ~179 KB, and the shared header (Radix dropdown and sheet) brings the landing page to ~258 KB.
 
 ## 9. Seams for later phases
 

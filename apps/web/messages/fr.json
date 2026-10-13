@@ -3,5 +3,15 @@
     "title": "Studybook",
     "tagline": "Des communautés d'apprentissage où chacun passe à l'action.",
     "cta": "Créer un groupe"
+  },
+  "Nav": {
+    "label": "Navigation principale",
+    "open": "Ouvrir le menu",
+    "home": "Accueil"
+  },
+  "LanguageSwitcher": {
+    "label": "Changer de langue",
+    "fr": "Français",
+    "en": "English"
   }
 }
