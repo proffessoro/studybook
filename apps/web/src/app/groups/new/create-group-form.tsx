@@ -4,7 +4,7 @@ import { type FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { describedBy, FormField } from '@/components/form-field';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/lib/api';
@@ -48,7 +48,7 @@ export function CreateGroupForm() {
   const err = (field: string) => messages.field(field, fieldErrors[field]);
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+    <form method="post" onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
       <FormField id="name" label={t('name')} error={err('name')}>
         <Input id="name" name="name" required maxLength={80} {...describedBy('name', { error: err('name') })} />
       </FormField>
@@ -77,9 +77,9 @@ export function CreateGroupForm() {
         </p>
       )}
 
-      <Button type="submit" size="lg" disabled={pending}>
+      <SubmitButton size="lg" pending={pending}>
         {pending ? t('creating') : t('createSubmit')}
-      </Button>
+      </SubmitButton>
     </form>
   );
 }

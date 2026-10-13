@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
-import { getGroup, getMe } from '@/lib/server-api';
+import { getLocale, getTranslations } from 'next-intl/server';
+import { getCategories, getGroup, getMe } from '@/lib/server-api';
 import { DangerZone } from './danger-zone';
 import { GroupSettingsForm } from './group-settings-form';
 
@@ -19,7 +19,8 @@ export default async function GroupSettingsPage({ params }: Props) {
   const group = await getGroup(groupId);
   if (!group) notFound();
   if (group.myRole !== 'leader') redirect(`/groups/${group.id}`);
-  const t = await getTranslations('GroupSettings');
+  const [t, locale, categories] = await Promise.all([getTranslations('GroupSettings'), getLocale(), getCategories()]);
+  const categoryOptions = categories.map((c) => ({ key: c.key, name: locale === 'en' ? c.nameEn : c.nameFr }));
 
   return (
     <main className="mx-auto flex max-w-md flex-col gap-8 px-4 py-8">
@@ -32,7 +33,7 @@ export default async function GroupSettingsPage({ params }: Props) {
           {t('archivedReadOnly')}
         </p>
       ) : (
-        <GroupSettingsForm group={group} />
+        <GroupSettingsForm group={group} categories={categoryOptions} />
       )}
       <DangerZone group={group} />
     </main>

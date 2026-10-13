@@ -97,3 +97,28 @@ export async function getMembers(groupId: string) {
   });
   return data?.members ?? [];
 }
+
+/** Interest categories, in display order. */
+export const getCategories = cache(async () => {
+  const { client } = await serverApi();
+  const { data } = await client.GET('/api/v1/categories', { cache: 'no-store' });
+  return data?.categories ?? [];
+});
+
+/** A page of the public catalogue, or null when the catalogue is off. */
+export async function getCatalogue(query: { category?: string; q?: string; cursor?: string }) {
+  const { client } = await serverApi();
+  const { data } = await client.GET('/api/v1/catalogue', { params: { query }, cache: 'no-store' });
+  return data ?? null;
+}
+
+/** A listed group's public page, with where the visitor stands, or null. */
+export const getCatalogueGroup = cache(async (slug: string) => {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/catalogue/{slug}', {
+    params: { path: { slug } },
+    headers: { cookie: cookieHeader },
+    cache: 'no-store',
+  });
+  return data ?? null;
+});

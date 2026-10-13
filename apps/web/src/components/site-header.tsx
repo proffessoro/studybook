@@ -13,20 +13,25 @@ import {
 } from '@/components/ui/sheet';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { UserMenu } from '@/components/user-menu';
-import { getMe } from '@/lib/server-api';
+import { getInstance, getMe } from '@/lib/server-api';
 
 /** Links shown in the header on wide screens and in the menu sheet on phones. Later steps add to these lists. */
 const visitorItems = [
   { href: '/', key: 'home' },
+  { href: '/catalogue', key: 'catalogue' },
   { href: '/login', key: 'login' },
   { href: '/signup', key: 'signup' },
 ] as const;
-const memberItems = [{ href: '/groups', key: 'groups' }] as const;
+const memberItems = [
+  { href: '/groups', key: 'groups' },
+  { href: '/catalogue', key: 'catalogue' },
+] as const;
 
 export async function SiteHeader() {
   const t = await getTranslations('Nav');
-  const me = await getMe();
-  const navItems = me ? memberItems : visitorItems;
+  const [me, instance] = await Promise.all([getMe(), getInstance()]);
+  const catalogueOn = instance?.features.catalogue ?? true;
+  const navItems = (me ? memberItems : visitorItems).filter((item) => catalogueOn || item.key !== 'catalogue');
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">

@@ -20,10 +20,15 @@ export function ApiZodResponse(status: number, schema: z.ZodType, description = 
   return applyDecorators(ApiResponse({ status, description, schema: schemaRef(schema) }));
 }
 
-/** JSON Schemas (OpenAPI 3.0 dialect) of every Zod schema that has an `id`. */
+/**
+ * JSON Schemas (OpenAPI 3.0 dialect) of every Zod schema that has an `id`.
+ * Described as inputs: request bodies are what clients send (before transforms
+ * and defaults). Response schemas have neither, so they read the same.
+ */
 export function zodComponents(): Record<string, unknown> {
   const { schemas } = z.toJSONSchema(z.globalRegistry, {
     target: 'openapi-3.0',
+    io: 'input',
     uri: (id) => `#/components/schemas/${id}`,
   });
   return Object.fromEntries(

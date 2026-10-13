@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { describedBy, FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { fieldErrorsOf, useApiErrorMessages } from '@/lib/api-errors';
@@ -93,7 +94,7 @@ export function EmailChange({ currentEmail }: { currentEmail: string }) {
 
   if (step.name === 'code') {
     return (
-      <form onSubmit={confirm} noValidate className="flex flex-col gap-4">
+      <form method="post" onSubmit={confirm} noValidate className="flex flex-col gap-4">
         <p className="text-muted-foreground">{t('codeSent', { email: step.newEmail })}</p>
         <FormField id="code" label={t('code')} error={codeError}>
           <Input
@@ -107,9 +108,9 @@ export function EmailChange({ currentEmail }: { currentEmail: string }) {
             {...describedBy('code', { error: codeError })}
           />
         </FormField>
-        <Button type="submit" disabled={pending}>
+        <SubmitButton pending={pending}>
           {t('confirmEmail')}
-        </Button>
+        </SubmitButton>
         <Button type="button" variant="ghost" onClick={() => setStep({ name: 'form' })}>
           {t('startAgain')}
         </Button>
@@ -118,7 +119,7 @@ export function EmailChange({ currentEmail }: { currentEmail: string }) {
   }
 
   return (
-    <form onSubmit={requestChange} noValidate className="flex flex-col gap-4">
+    <form method="post" onSubmit={requestChange} noValidate className="flex flex-col gap-4">
       <FormField id="newEmail" label={t('newEmail')} error={newEmailError}>
         <Input id="newEmail" name="newEmail" type="email" autoComplete="email" required {...describedBy('newEmail', { error: newEmailError })} />
       </FormField>
@@ -133,9 +134,9 @@ export function EmailChange({ currentEmail }: { currentEmail: string }) {
         />
       </FormField>
       <div className="flex gap-2">
-        <Button type="submit" disabled={pending}>
+        <SubmitButton pending={pending}>
           {t('sendCode')}
-        </Button>
+        </SubmitButton>
         <Button type="button" variant="ghost" onClick={() => setStep({ name: 'idle' })}>
           {t('cancel')}
         </Button>

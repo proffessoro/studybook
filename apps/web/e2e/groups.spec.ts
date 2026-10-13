@@ -44,6 +44,10 @@ test.describe('groups', () => {
 
     await page.getByRole('link', { name: 'Paramètres' }).click();
     await page.getByLabel('Visible dans le catalogue').check();
+    await page.getByRole('button', { name: 'Enregistrer les paramètres' }).click();
+    // GRP-04: a listed group needs a category.
+    await expect(page.getByText("Choisissez au moins un centre d'intérêt pour lister le groupe dans le catalogue.")).toBeVisible();
+    await page.getByLabel('Tech').check();
     await page.getByLabel("Valider les personnes qui utilisent le lien d'invitation").check();
     await page.getByRole('button', { name: 'Enregistrer les paramètres' }).click();
     await expect(page.getByText('Paramètres enregistrés.')).toBeVisible();

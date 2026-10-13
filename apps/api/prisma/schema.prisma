@@ -215,8 +215,11 @@ model Group {
   memberships            Membership[]
   inviteLinks            InviteLink[]
   joinRequests           JoinRequest[]
+  categories             GroupCategory[]
+  tags                   GroupTag[]
 
   @@index([ownerId])
+  @@index([visibility, status])
   @@map("groups")
 }
 
@@ -305,4 +308,41 @@ model JoinRequest {
   @@index([groupId, status])
   @@index([userId])
   @@map("join_requests")
+}
+
+/// Interest categories for the catalogue (GRP-04), managed by the instance admin.
+model Category {
+  id        String          @id @default(uuid(7)) @db.Uuid
+  /// Stable identifier used in URLs, e.g. "languages"
+  key       String          @unique
+  nameFr    String          @map("name_fr")
+  nameEn    String          @map("name_en")
+  sort      Int             @default(0)
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+  groups    GroupCategory[]
+
+  @@map("categories")
+}
+
+model GroupCategory {
+  groupId    String   @map("group_id") @db.Uuid
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  categoryId String   @map("category_id") @db.Uuid
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([groupId, categoryId])
+  @@index([categoryId])
+  @@map("group_categories")
+}
+
+/// Free tags set by the leader (GRP-04), stored lowercased.
+model GroupTag {
+  groupId String @map("group_id") @db.Uuid
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  tag     String
+
+  @@id([groupId, tag])
+  @@index([tag])
+  @@map("group_tags")
 }

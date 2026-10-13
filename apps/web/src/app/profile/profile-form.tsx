@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { Me } from '@studybook/shared';
 import { describedBy, FormField } from '@/components/form-field';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { setLocale } from '@/i18n/actions';
 import { api } from '@/lib/api';
@@ -60,7 +60,7 @@ export function ProfileForm({ me }: { me: Me }) {
   const err = (field: string) => messages.field(field, fieldErrors[field]);
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+    <form method="post" onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
       <FormField id="fullName" label={tSignUp('fullName')} error={err('fullName')}>
         <Input id="fullName" name="fullName" autoComplete="name" defaultValue={me.fullName} required {...describedBy('fullName', { error: err('fullName') })} />
       </FormField>
@@ -113,9 +113,9 @@ export function ProfileForm({ me }: { me: Me }) {
         </p>
       )}
 
-      <Button type="submit" size="lg" disabled={pending}>
+      <SubmitButton size="lg" pending={pending}>
         {pending ? t('saving') : t('save')}
-      </Button>
+      </SubmitButton>
     </form>
   );
 }

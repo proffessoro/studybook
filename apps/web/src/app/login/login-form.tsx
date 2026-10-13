@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { FormField } from '@/components/form-field';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { useApiErrorMessages } from '@/lib/api-errors';
@@ -45,7 +45,7 @@ export function LoginForm({ email: initialEmail, next }: { email: string; next: 
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+    <form method="post" onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
       <FormField id="email" label={t('email')}>
         <Input id="email" name="email" type="email" autoComplete="email" defaultValue={initialEmail} required />
       </FormField>
@@ -75,9 +75,9 @@ export function LoginForm({ email: initialEmail, next }: { email: string; next: 
         </div>
       )}
 
-      <Button type="submit" size="lg" disabled={pending}>
+      <SubmitButton size="lg" pending={pending}>
         {pending ? t('submitting') : t('submit')}
-      </Button>
+      </SubmitButton>
     </form>
   );
 }

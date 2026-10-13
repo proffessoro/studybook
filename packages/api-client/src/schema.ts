@@ -452,6 +452,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CatalogueController_categories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalogue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CatalogueController_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalogue/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CatalogueController_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalogue/{slug}/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CatalogueRequestController_request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CategoriesAdminController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/categories/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["CategoriesAdminController_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["CategoriesAdminController_update"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -475,7 +571,6 @@ export interface components {
         SignUpInput: {
             fullName: string;
             pseudo: string;
-            /** Format: email */
             email: string;
             phone: string;
             password: string;
@@ -488,7 +583,6 @@ export interface components {
             email: string;
         };
         VerifyEmailInput: {
-            /** Format: email */
             email: string;
             code: string;
         };
@@ -497,11 +591,9 @@ export interface components {
             status: "verified";
         };
         ResendVerificationInput: {
-            /** Format: email */
             email: string;
         };
         LoginInput: {
-            /** Format: email */
             email: string;
             password: string;
         };
@@ -516,7 +608,6 @@ export interface components {
             isInstanceAdmin: boolean;
         };
         RecoverInput: {
-            /** Format: email */
             email: string;
         };
         ResetPasswordInput: {
@@ -531,7 +622,6 @@ export interface components {
             locale?: "fr" | "en";
         };
         ChangeEmailInput: {
-            /** Format: email */
             newEmail: string;
             password: string;
         };
@@ -554,6 +644,53 @@ export interface components {
             /** @enum {boolean} */
             acceptPrivacy: true;
         };
+        CategoryView: {
+            key: string;
+            nameFr: string;
+            nameEn: string;
+        };
+        CategoryList: {
+            categories: components["schemas"]["CategoryView"][];
+        };
+        CreateCategoryInput: {
+            key: string;
+            nameFr: string;
+            nameEn: string;
+            /** @default 0 */
+            sort: number;
+        };
+        UpdateCategoryInput: {
+            nameFr?: string;
+            nameEn?: string;
+            sort?: number;
+        };
+        CatalogueGroup: {
+            slug: string;
+            name: string;
+            description: string;
+            memberCount: number;
+            languageLabel: string | null;
+            categoryKeys: string[];
+            tags: string[];
+            full: boolean;
+        };
+        CataloguePage: {
+            groups: components["schemas"]["CatalogueGroup"][];
+            nextCursor: string | null;
+        };
+        CatalogueGroupDetail: {
+            slug: string;
+            name: string;
+            description: string;
+            memberCount: number;
+            languageLabel: string | null;
+            categoryKeys: string[];
+            tags: string[];
+            full: boolean;
+            /** @enum {string|null} */
+            viewer: "none" | "member" | "pending" | "banned" | null;
+            groupId: string | null;
+        };
         CreateGroupInput: {
             name: string;
             /** @default  */
@@ -570,6 +707,8 @@ export interface components {
             progressVisibility?: "own" | "all";
             feedEnabled?: boolean;
             languageLabel?: string;
+            categoryKeys?: string[];
+            tags?: string[];
         };
         DeleteGroupInput: {
             confirmName: string;
@@ -590,6 +729,8 @@ export interface components {
             status: "active" | "archived";
             memberCount: number;
             memberCap: number | null;
+            categoryKeys: string[];
+            tags: string[];
             /** @enum {string} */
             myRole: "leader" | "moderator" | "member";
             storage: {
@@ -1717,6 +1858,230 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    CatalogueController_categories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Interest categories, in display order */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CategoryList"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    CatalogueController_list: {
+        parameters: {
+            query?: {
+                /** @description A category key */
+                category?: string;
+                /** @description Matches group names and tags */
+                q?: string;
+                /** @description `nextCursor` from the previous page */
+                cursor?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Listed groups, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CataloguePage"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    CatalogueController_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A listed group, and where the visitor stands */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogueGroupDetail"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    CatalogueRequestController_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A request was sent to the leader (or you are already a member) */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JoinResult"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    CategoriesAdminController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCategoryInput"];
+            };
+        };
+        responses: {
+            /** @description Category created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CategoryView"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    CategoriesAdminController_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Category deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    CategoriesAdminController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCategoryInput"];
+            };
+        };
+        responses: {
+            /** @description Category updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CategoryView"];
+                };
             };
             /** @description Error */
             default: {

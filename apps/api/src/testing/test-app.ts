@@ -7,6 +7,8 @@ import { type EmailJob, Outbox } from '../notify/email-job.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { REDIS } from '../redis/redis.module.js';
 
+const STARTER_CATEGORIES = ['languages', 'tech', 'business', 'faith', 'health', 'exam-prep'];
+
 /** Keeps emails in memory instead of queueing them. */
 export class FakeOutbox extends Outbox {
   readonly sent: EmailJob[] = [];
@@ -44,6 +46,8 @@ export async function createTestApp() {
     async reset() {
       outbox.sent.length = 0;
       await prisma.$executeRawUnsafe('TRUNCATE users, groups, instance_settings CASCADE');
+      // Keep the starter categories from the migration; drop any a test added.
+      await prisma.category.deleteMany({ where: { key: { notIn: STARTER_CATEGORIES } } });
       await redis.flushdb();
     },
   };

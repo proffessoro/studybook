@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { describedBy, FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { fieldErrorsOf, useApiErrorMessages } from '@/lib/api-errors';
@@ -93,7 +94,7 @@ export function VerifyEmailForm({
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+    <form method="post" onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
       <p className="text-muted-foreground">{justSent && initialEmail ? t('sentTo', { email: initialEmail }) : t('intro')}</p>
 
       <FormField id="email" label={t('email')}>
@@ -122,9 +123,9 @@ export function VerifyEmailForm({
         </p>
       )}
 
-      <Button type="submit" size="lg" disabled={pending}>
+      <SubmitButton size="lg" pending={pending}>
         {pending ? t('submitting') : t('submit')}
-      </Button>
+      </SubmitButton>
       <Button type="button" variant="ghost" onClick={resend} disabled={pending || !email}>
         {t('resend')}
       </Button>

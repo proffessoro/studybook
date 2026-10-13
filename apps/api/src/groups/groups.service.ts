@@ -73,14 +73,36 @@ export class GroupsService {
     }));
   }
 
-  /** GRP-02. */
+  /** GRP-02, plus categories and tags for the catalogue (GRP-04). */
   async update(group: Group, membership: Membership, input: z.output<typeof UpdateGroupInput>): Promise<GroupView> {
-    const updated = await this.prisma.group.update({
-      where: { id: group.id },
-      data: {
-        ...input,
-        ...(input.languageLabel !== undefined ? { languageLabel: input.languageLabel || null } : {}),
-      },
+    const { categoryKeys, tags, ...settings } = input;
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      let categoryIds: string[] | undefined;
+      if (categoryKeys) {
+        const categories = await tx.category.findMany({ where: { key: { in: categoryKeys } } });
+        if (categories.length !== categoryKeys.length) throw invalidField('categoryKeys', 'unknown');
+        categoryIds = categories.map((c) => c.id);
+        await tx.groupCategory.deleteMany({ where: { groupId: group.id } });
+        await tx.groupCategory.createMany({ data: categoryIds.map((categoryId) => ({ groupId: group.id, categoryId })) });
+      }
+      if (tags) {
+        await tx.groupTag.deleteMany({ where: { groupId: group.id } });
+        await tx.groupTag.createMany({ data: tags.map((tag) => ({ groupId: group.id, tag })) });
+      }
+
+      const saved = await tx.group.update({
+        where: { id: group.id },
+        data: {
+          ...settings,
+          ...(settings.languageLabel !== undefined ? { languageLabel: settings.languageLabel || null } : {}),
+        },
+      });
+      // GRP-04: a listed group picks one or more categories, so visitors can find it.
+      if (saved.visibility === 'listed' && (await tx.groupCategory.count({ where: { groupId: group.id } })) === 0) {
+        throw invalidField('categoryKeys', 'required_when_listed');
+      }
+      return saved;
     });
     return this.toView(updated, membership);
   }
@@ -103,7 +125,11 @@ export class GroupsService {
   }
 
   async toView(group: Group, membership: Membership): Promise<GroupView> {
-    const memberCount = await this.prisma.membership.count({ where: { groupId: group.id, status: 'active' } });
+    const [memberCount, categories, tags] = await Promise.all([
+      this.prisma.membership.count({ where: { groupId: group.id, status: 'active' } }),
+      this.prisma.groupCategory.findMany({ where: { groupId: group.id }, include: { category: true } }),
+      this.prisma.groupTag.findMany({ where: { groupId: group.id }, orderBy: { tag: 'asc' } }),
+    ]);
     return {
       id: group.id,
       slug: group.slug,
@@ -117,6 +143,8 @@ export class GroupsService {
       status: group.status,
       memberCount,
       memberCap: group.memberCap,
+      categoryKeys: categories.sort((a, b) => a.category.sort - b.category.sort).map((c) => c.category.key),
+      tags: tags.map((t) => t.tag),
       myRole: membership.role,
       storage: can(membership.role, 'group.storage.view')
         ? {
@@ -127,4 +155,8 @@ export class GroupsService {
       createdAt: group.createdAt.toISOString(),
     };
   }
+}
+
+function invalidField(field: string, code: string) {
+  return new ApiError(HttpStatus.BAD_REQUEST, ErrorCode.VALIDATION_FAILED, 'Invalid input', { fields: { [field]: [code] } });
 }

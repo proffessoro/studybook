@@ -64,3 +64,19 @@ test.describe('login', () => {
     await expect(page).toHaveURL('/groups');
   });
 });
+
+test("before the page's JavaScript runs, the form can't be sent", async ({ browser }) => {
+  // On slow phones the page shows before its JavaScript runs. A tap then would make the
+  // browser send the form itself, with the password in the request. The button waits.
+  const context = await browser.newContext({ javaScriptEnabled: false, locale: 'fr-FR' });
+  const page = await context.newPage();
+  await page.goto('/login');
+  await page.getByLabel('Email').fill('someone@example.cm');
+  await page.getByLabel('Mot de passe', { exact: true }).fill('my secret password');
+
+  await expect(page.getByRole('button', { name: 'Se connecter' })).toBeDisabled();
+  await page.getByLabel('Mot de passe', { exact: true }).press('Enter');
+  await page.waitForLoadState();
+  expect(page.url()).not.toContain('secret');
+  await context.close();
+});

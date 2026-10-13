@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import type { GroupView } from '@studybook/shared';
 import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { useApiErrorMessages } from '@/lib/api-errors';
@@ -68,14 +69,14 @@ export function DangerZone({ group }: { group: GroupView }) {
         </Button>
       </div>
 
-      <form onSubmit={onDelete} className="flex flex-col gap-3">
+      <form method="post" onSubmit={onDelete} className="flex flex-col gap-3">
         <p className="text-sm">{t('deleteHint')}</p>
         <FormField id="confirmName" label={t('deleteConfirm', { name: group.name })}>
           <Input id="confirmName" value={confirmName} onChange={(e) => setConfirmName(e.target.value)} autoComplete="off" />
         </FormField>
-        <Button type="submit" variant="destructive" className="self-start" disabled={pending || confirmName.trim() !== group.name}>
+        <SubmitButton variant="destructive" className="self-start" pending={pending} disabled={confirmName.trim() !== group.name}>
           {t('delete')}
-        </Button>
+        </SubmitButton>
       </form>
 
       {error && (
