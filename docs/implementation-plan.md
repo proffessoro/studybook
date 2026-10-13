@@ -24,7 +24,7 @@
 | 5 | Prisma 7 + PostgreSQL 18, `prisma.config.ts`, first model (`instance_settings`), first migration (`init`) | ✅ |
 | 6 | Dev services: `deploy/docker-compose.dev.yml` (Postgres, Valkey) | ✅ |
 | 7 | Design system: shadcn/ui init, base layout, mobile nav, FR/EN switcher | ✅ |
-| 8 | Linting (ESLint 10 flat config), Vitest wiring, Playwright skeleton | ⬜ |
+| 8 | Linting (ESLint 10 flat config), Vitest wiring, Playwright skeleton | ✅ |
 | 9 | Production Dockerfiles (web, api/worker), `deploy/docker-compose.yml`, Caddyfile, `.env.example` | ⬜ |
 | 10 | GitHub Actions: lint, typecheck, test, build images, push to GHCR | ⬜ |
 | 11 | Landing page (FR/EN) | ⬜ |
