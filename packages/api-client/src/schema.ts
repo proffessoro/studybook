@@ -548,13 +548,61 @@ export interface paths {
         patch: operations["CategoriesAdminController_update"];
         trace?: never;
     };
+    "/api/v1/groups/{groupId}/uploads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["FilesController_request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uploads/{fileId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["FilesController_receive"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/files/{fileId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["FilesController_download"];
+        put?: never;
+        post?: never;
+        delete: operations["FilesController_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         ApiError: {
             /** @enum {string} */
-            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "INVALID_CREDENTIALS" | "WRONG_PASSWORD" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_SUSPENDED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "RESET_LINK_INVALID" | "GOOGLE_SIGNUP_EXPIRED" | "GROUP_FULL" | "GROUP_ARCHIVED" | "INVITE_INVALID" | "BANNED_FROM_GROUP" | "REQUEST_ALREADY_DECIDED" | "LEADER_MUST_TRANSFER" | "CANNOT_MANAGE_LEADER" | "CONFIRMATION_MISMATCH" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
+            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "INVALID_CREDENTIALS" | "WRONG_PASSWORD" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_SUSPENDED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "RESET_LINK_INVALID" | "GOOGLE_SIGNUP_EXPIRED" | "GROUP_FULL" | "GROUP_ARCHIVED" | "INVITE_INVALID" | "BANNED_FROM_GROUP" | "REQUEST_ALREADY_DECIDED" | "LEADER_MUST_TRANSFER" | "CANNOT_MANAGE_LEADER" | "CONFIRMATION_MISMATCH" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "FILE_TOO_LARGE" | "FILE_TYPE_NOT_ALLOWED" | "UPLOAD_SIZE_MISMATCH" | "UPLOAD_EXPIRED" | "INTERNAL_ERROR";
             message: string;
             details?: {
                 [key: string]: unknown;
@@ -814,6 +862,26 @@ export interface components {
         RemoveMemberInput: {
             /** @default false */
             ban: boolean;
+        };
+        RequestUploadInput: {
+            /** @enum {string} */
+            kind: "pdf" | "audio" | "video" | "image";
+            sizeBytes: number;
+            filename: string;
+        };
+        UploadTicket: {
+            fileId: string;
+            uploadUrl: string;
+            expiresAt: string;
+        };
+        FileView: {
+            id: string;
+            /** @enum {string} */
+            kind: "pdf" | "audio" | "video" | "image";
+            mime: string;
+            filename: string;
+            sizeBytes: number;
+            url: string;
         };
         HealthStatus: {
             /** @enum {string} */
@@ -2082,6 +2150,141 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["CategoryView"];
                 };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    FilesController_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestUploadInput"];
+            };
+        };
+        responses: {
+            /** @description Quota reserved; send the bytes to uploadUrl */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadTicket"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    FilesController_receive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                fileId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/octet-stream": string;
+            };
+        };
+        responses: {
+            /** @description Stored and checked */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileView"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    FilesController_download: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                fileId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The file */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Part of the file (Range request) */
+            206: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    FilesController_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                fileId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted; the bytes count no more against the quota */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Error */
             default: {

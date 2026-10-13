@@ -7,6 +7,8 @@ import { ApiExceptionFilter } from './common/api-exception.filter.js';
 export function configureApp(app: NestFastifyApplication): NestFastifyApplication {
   const fastify = app.getHttpAdapter().getInstance();
   void fastify.register(fastifyCookie);
+  // Uploads arrive as raw bytes and go straight to storage as a stream, never buffered in memory.
+  fastify.addContentTypeParser('application/octet-stream', (_request, payload, done) => done(null, payload));
   registerCsrfCheck(fastify);
 
   app.setGlobalPrefix('api/v1');

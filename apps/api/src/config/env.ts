@@ -36,6 +36,10 @@ export const env = {
       issuer: process.env.GOOGLE_ISSUER ?? 'https://accounts.google.com',
     };
   },
+  /** Where uploaded files live with the local driver (design §2: `local` by default, S3 later). */
+  get storageDir() {
+    return process.env.STORAGE_DIR ?? 'storage';
+  },
   smtp: {
     host: process.env.SMTP_HOST ?? 'localhost',
     port: Number(process.env.SMTP_PORT ?? 1025),

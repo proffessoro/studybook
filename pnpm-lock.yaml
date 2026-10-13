@@ -229,6 +229,9 @@ importers:
       fastify:
         specifier: 5.12.5
         version: 5.12.5
+      file-type:
+        specifier: 22.1.1
+        version: 22.1.1(supports-color@10.2.2)
       ioredis:
         specifier: 6.0.0
         version: 6.0.0(supports-color@10.2.2)
