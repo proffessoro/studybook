@@ -12,6 +12,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@studybook/api-client": "workspace:*",
     "@studybook/shared": "workspace:*",
     "class-variance-authority": "0.7.1",
     "cn": "0.4.0",

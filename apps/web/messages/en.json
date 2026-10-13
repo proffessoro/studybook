@@ -7,11 +7,92 @@
   "Nav": {
     "label": "Main navigation",
     "open": "Open menu",
-    "home": "Home"
+    "home": "Home",
+    "signup": "Sign up"
   },
   "LanguageSwitcher": {
     "label": "Change language",
     "fr": "Français",
     "en": "English"
+  },
+  "SignUp": {
+    "title": "Create your account",
+    "intro": "Join or create learning groups. We'll email you a code to verify your address.",
+    "fullName": "Full name",
+    "pseudo": "Pseudo",
+    "pseudoHint": "What other members see. 3 to 30 letters, digits, _ . or -",
+    "email": "Email",
+    "phone": "Phone number",
+    "phoneHint": "Cameroon number, e.g. 6 77 12 34 56",
+    "password": "Password",
+    "passwordHint": "At least 8 characters",
+    "language": "Language",
+    "languages": {
+      "fr": "Français",
+      "en": "English"
+    },
+    "acceptPrivacy": "I have read and accept the <link>privacy policy</link>",
+    "submit": "Create my account",
+    "submitting": "Creating your account…"
+  },
+  "VerifyEmail": {
+    "title": "Verify your email",
+    "intro": "Enter the 6-digit code we sent to your email.",
+    "sentTo": "We sent a 6-digit code to {email}. It expires in 30 minutes.",
+    "email": "Email",
+    "code": "Code",
+    "codeFormat": "The code has 6 digits.",
+    "submit": "Verify",
+    "submitting": "Checking…",
+    "resend": "Send a new code",
+    "resent": "If {email} is waiting for verification, a new code is on its way.",
+    "verified": "Your email is verified.",
+    "verifiedNext": "Your account is active. Logging in is coming in the next update.",
+    "home": "Go to the home page"
+  },
+  "Errors": {
+    "field": {
+      "invalid": "This value isn't valid.",
+      "invalid_type": "This field is required.",
+      "too_small": "This is too short.",
+      "too_big": "This is too long.",
+      "invalid_format": "This format isn't valid.",
+      "taken": "Already used by another account."
+    },
+    "fields": {
+      "": {
+        "taken": "One of these values was just taken. Please try again."
+      },
+      "fullName": {
+        "too_small": "Enter your full name."
+      },
+      "pseudo": {
+        "invalid_format": "Use 3 to 30 letters, digits, _ . or - (no spaces).",
+        "taken": "This pseudo is taken. Try another one."
+      },
+      "email": {
+        "invalid_format": "Enter a valid email address.",
+        "taken": "An account already uses this email."
+      },
+      "phone": {
+        "invalid_format": "Enter a Cameroon number, e.g. 6 77 12 34 56.",
+        "taken": "An account already uses this number."
+      },
+      "password": {
+        "too_small": "Use at least 8 characters.",
+        "too_big": "Use at most 128 characters."
+      },
+      "acceptPrivacy": {
+        "invalid_value": "You need to accept the privacy policy to create an account."
+      }
+    },
+    "api": {
+      "RATE_LIMITED": "Too many attempts. Try again in {minutes} min.",
+      "VERIFICATION_CODE_INVALID": "This code is wrong. Check the email and try again.",
+      "VERIFICATION_CODE_EXPIRED": "This code has expired. Ask for a new one below.",
+      "INTERNAL_ERROR": "Something went wrong on our side. Please try again.",
+      "network": "Can't reach the server. Check your connection and try again.",
+      "unknown": "Something went wrong. Please try again."
+    }
   }
 }

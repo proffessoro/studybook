@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { Button } from '@/components/ui/button';
 
@@ -9,7 +10,7 @@ export default async function HomePage() {
       <h1 className="text-3xl font-bold">{t('title')}</h1>
       <p className="text-lg text-muted-foreground">{t('tagline')}</p>
       <Button size="lg" asChild>
-        <a href="#">{t('cta')}</a>
+        <Link href="/signup">{t('cta')}</Link>
       </Button>
     </main>
   );

@@ -7,11 +7,92 @@
   "Nav": {
     "label": "Navigation principale",
     "open": "Ouvrir le menu",
-    "home": "Accueil"
+    "home": "Accueil",
+    "signup": "S'inscrire"
   },
   "LanguageSwitcher": {
     "label": "Changer de langue",
     "fr": "Français",
     "en": "English"
+  },
+  "SignUp": {
+    "title": "Créer votre compte",
+    "intro": "Rejoignez ou créez des groupes d'apprentissage. Nous vous enverrons un code par email pour vérifier votre adresse.",
+    "fullName": "Nom complet",
+    "pseudo": "Pseudo",
+    "pseudoHint": "Ce que voient les autres membres. 3 à 30 lettres, chiffres, _ . ou -",
+    "email": "Email",
+    "phone": "Numéro de téléphone",
+    "phoneHint": "Numéro camerounais, par exemple 6 77 12 34 56",
+    "password": "Mot de passe",
+    "passwordHint": "Au moins 8 caractères",
+    "language": "Langue",
+    "languages": {
+      "fr": "Français",
+      "en": "English"
+    },
+    "acceptPrivacy": "J'ai lu et j'accepte la <link>politique de confidentialité</link>",
+    "submit": "Créer mon compte",
+    "submitting": "Création du compte…"
+  },
+  "VerifyEmail": {
+    "title": "Vérifiez votre email",
+    "intro": "Saisissez le code à 6 chiffres reçu par email.",
+    "sentTo": "Nous avons envoyé un code à 6 chiffres à {email}. Il expire dans 30 minutes.",
+    "email": "Email",
+    "code": "Code",
+    "codeFormat": "Le code comporte 6 chiffres.",
+    "submit": "Vérifier",
+    "submitting": "Vérification…",
+    "resend": "Recevoir un nouveau code",
+    "resent": "Si {email} attend une vérification, un nouveau code arrive.",
+    "verified": "Votre email est vérifié.",
+    "verifiedNext": "Votre compte est actif. La connexion arrive dans la prochaine mise à jour.",
+    "home": "Aller à l'accueil"
+  },
+  "Errors": {
+    "field": {
+      "invalid": "Cette valeur n'est pas valide.",
+      "invalid_type": "Ce champ est obligatoire.",
+      "too_small": "C'est trop court.",
+      "too_big": "C'est trop long.",
+      "invalid_format": "Ce format n'est pas valide.",
+      "taken": "Déjà utilisé par un autre compte."
+    },
+    "fields": {
+      "": {
+        "taken": "Une de ces valeurs vient d'être prise. Veuillez réessayer."
+      },
+      "fullName": {
+        "too_small": "Saisissez votre nom complet."
+      },
+      "pseudo": {
+        "invalid_format": "Utilisez 3 à 30 lettres, chiffres, _ . ou - (sans espace).",
+        "taken": "Ce pseudo est déjà pris. Essayez-en un autre."
+      },
+      "email": {
+        "invalid_format": "Saisissez une adresse email valide.",
+        "taken": "Un compte utilise déjà cet email."
+      },
+      "phone": {
+        "invalid_format": "Saisissez un numéro camerounais, par exemple 6 77 12 34 56.",
+        "taken": "Un compte utilise déjà ce numéro."
+      },
+      "password": {
+        "too_small": "Utilisez au moins 8 caractères.",
+        "too_big": "Utilisez au plus 128 caractères."
+      },
+      "acceptPrivacy": {
+        "invalid_value": "Vous devez accepter la politique de confidentialité pour créer un compte."
+      }
+    },
+    "api": {
+      "RATE_LIMITED": "Trop de tentatives. Réessayez dans {minutes} min.",
+      "VERIFICATION_CODE_INVALID": "Ce code est incorrect. Vérifiez l'email et réessayez.",
+      "VERIFICATION_CODE_EXPIRED": "Ce code a expiré. Demandez-en un nouveau ci-dessous.",
+      "INTERNAL_ERROR": "Un problème est survenu de notre côté. Veuillez réessayer.",
+      "network": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.",
+      "unknown": "Un problème est survenu. Veuillez réessayer."
+    }
   }
 }

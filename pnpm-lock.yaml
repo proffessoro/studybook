@@ -275,6 +275,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@studybook/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@studybook/shared':
         specifier: workspace:*
         version: link:../../packages/shared
