@@ -1,36 +1,5 @@
-import { type APIRequestContext, expect, test } from '@playwright/test';
-
-/**
- * Needs the API, the email worker (or WORKER_IN_PROCESS=true), and Mailpit
- * from deploy/docker-compose.dev.yml, which catches the verification email.
- */
-const MAILPIT = process.env.MAILPIT_URL ?? 'http://localhost:8025';
-
-function uniqueUser() {
-  const n = `${Date.now()}`.slice(-8);
-  return {
-    email: `e2e-${n}@e2e.test`,
-    pseudo: `e2e${n}`,
-    // A valid Cameroon mobile number that differs on every run
-    phone: `6${n.padStart(8, '0')}`,
-  };
-}
-
-async function emailedCode(request: APIRequestContext, email: string): Promise<string> {
-  let code = '';
-  await expect
-    .poll(
-      async () => {
-        const res = await request.get(`${MAILPIT}/api/v1/search`, { params: { query: `to:${email}` } });
-        const { messages } = (await res.json()) as { messages: { Subject: string }[] };
-        code = messages[0]?.Subject.match(/\d{6}/)?.[0] ?? '';
-        return code;
-      },
-      { timeout: 15_000 },
-    )
-    .toMatch(/^\d{6}$/);
-  return code;
-}
+import { expect, test } from '@playwright/test';
+import { createUser, emailedCode, uniqueUser } from './helpers';
 
 test.describe('sign-up', () => {
   test.use({ locale: 'fr-FR' });
@@ -54,15 +23,13 @@ test.describe('sign-up', () => {
     await page.getByRole('button', { name: 'Vérifier' }).click();
 
     await expect(page.getByText('Votre email est vérifié.')).toBeVisible();
+    await page.getByRole('link', { name: 'Se connecter' }).last().click();
+    await expect(page.getByLabel('Email')).toHaveValue(user.email);
   });
 
   test('the link in the email verifies on its own', async ({ page, request }) => {
-    const user = uniqueUser();
-    const res = await request.post('/api/v1/auth/signup', {
-      data: { fullName: 'Test E2E', ...user, password: 'correct horse', locale: 'fr', acceptPrivacy: true },
-    });
-    expect(res.status()).toBe(201);
-    const code = await emailedCode(request, user.email);
+    const { email, code } = await createUser(request, { verified: false });
+    const user = { email };
 
     await page.goto(`/verify-email?${new URLSearchParams({ email: user.email, code })}`);
 

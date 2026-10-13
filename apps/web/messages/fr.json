@@ -8,7 +8,10 @@
     "label": "Navigation principale",
     "open": "Ouvrir le menu",
     "home": "Accueil",
-    "signup": "S'inscrire"
+    "signup": "S'inscrire",
+    "login": "Se connecter",
+    "logout": "Se déconnecter",
+    "account": "Compte de {pseudo}"
   },
   "LanguageSwitcher": {
     "label": "Changer de langue",
@@ -47,8 +50,8 @@
     "resend": "Recevoir un nouveau code",
     "resent": "Si {email} attend une vérification, un nouveau code arrive.",
     "verified": "Votre email est vérifié.",
-    "verifiedNext": "Votre compte est actif. La connexion arrive dans la prochaine mise à jour.",
-    "home": "Aller à l'accueil"
+    "verifiedNext": "Votre compte est actif. Vous pouvez maintenant vous connecter.",
+    "login": "Se connecter"
   },
   "Errors": {
     "field": {
@@ -92,7 +95,20 @@
       "VERIFICATION_CODE_EXPIRED": "Ce code a expiré. Demandez-en un nouveau ci-dessous.",
       "INTERNAL_ERROR": "Un problème est survenu de notre côté. Veuillez réessayer.",
       "network": "Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.",
-      "unknown": "Un problème est survenu. Veuillez réessayer."
+      "unknown": "Un problème est survenu. Veuillez réessayer.",
+      "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
+      "ACCOUNT_SUSPENDED": "Ce compte est suspendu. Contactez l'administrateur de ce serveur."
     }
+  },
+  "Login": {
+    "title": "Se connecter",
+    "email": "Email",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "fillBoth": "Saisissez votre email et votre mot de passe.",
+    "notVerified": "Votre email n'est pas encore vérifié. Saisissez le code reçu par email, ou demandez-en un nouveau.",
+    "verifyNow": "Vérifier mon email",
+    "noAccount": "Pas encore de compte ? <link>Inscrivez-vous</link>"
   }
 }

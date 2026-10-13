@@ -59,3 +59,26 @@ export type VerifyEmailResult = z.infer<typeof VerifyEmailResult>;
 
 export const ResendVerificationInput = z.object({ email: Email }).meta({ id: 'ResendVerificationInput' });
 export type ResendVerificationInput = z.input<typeof ResendVerificationInput>;
+
+export const LoginInput = z
+  .object({
+    email: Email,
+    // Not checked against the sign-up rules: older passwords must still work.
+    password: z.string().min(1).max(128),
+  })
+  .meta({ id: 'LoginInput' });
+export type LoginInput = z.input<typeof LoginInput>;
+
+/** The logged-in user, as returned by `GET /me` and `POST /auth/login`. */
+export const Me = z
+  .object({
+    id: z.string(),
+    fullName: z.string(),
+    pseudo: z.string(),
+    email: z.string(),
+    phone: z.string().nullable(),
+    locale: Locale,
+    isInstanceAdmin: z.boolean(),
+  })
+  .meta({ id: 'Me' });
+export type Me = z.infer<typeof Me>;

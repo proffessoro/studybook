@@ -10,15 +10,15 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function VerifyEmailPage({
   searchParams,
 }: {
-  searchParams: Promise<{ email?: string; code?: string }>;
+  searchParams: Promise<{ email?: string; code?: string; sent?: string }>;
 }) {
   const t = await getTranslations('VerifyEmail');
-  const { email = '', code = '' } = await searchParams;
+  const { email = '', code = '', sent } = await searchParams;
 
   return (
     <main className="mx-auto flex max-w-md flex-col gap-6 px-4 py-8">
       <h1 className="text-2xl font-bold">{t('title')}</h1>
-      <VerifyEmailForm email={email} code={code} />
+      <VerifyEmailForm email={email} code={code} justSent={sent === '1'} />
     </main>
   );
 }

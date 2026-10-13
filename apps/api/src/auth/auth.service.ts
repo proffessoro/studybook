@@ -1,8 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { hash } from 'argon2';
+import { hash, verify } from 'argon2';
 import type { z } from 'zod';
 import {
   ErrorCode,
+  type LoginInput,
+  type Me,
   PRIVACY_POLICY_VERSION,
   type ResendVerificationInput,
   type SignUpInput,
@@ -15,10 +17,26 @@ import { Prisma, type User } from '../generated/prisma/client.js';
 import { Outbox } from '../notify/email-job.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { type Limit, RateLimiter } from '../rate-limit/rate-limiter.js';
+import { Sessions } from './sessions.js';
 import { VerificationCodes } from './verification-codes.js';
 
 /** An unverified sign-up stops holding its pseudo and phone after this long. */
 const PENDING_HOLD_MS = 24 * 3600 * 1000;
+
+/**
+ * Failed logins: 5 per 15 min for one account from one IP (design §5.6), and
+ * 20 per 15 min from one IP across accounts. Per account *and* IP, so a
+ * stranger can't lock someone out of their own account.
+ */
+function loginLimits(email: string, ip: string): Limit[] {
+  return [
+    { key: `login-fail:acct:${email}:${ip}`, max: 5, windowSeconds: 900 },
+    { key: `login-fail:ip:${ip}`, max: 20, windowSeconds: 900 },
+  ];
+}
+
+/** Compared against when the email is unknown, so both cases take the same time. */
+let dummyHash: Promise<string> | undefined;
 
 /** Verification emails: 3 per hour per address, 10 per day per IP (design §5.6). */
 function emailLimits(email: string, ip: string): Limit[] {
@@ -35,7 +53,42 @@ export class AuthService {
     private readonly codes: VerificationCodes,
     private readonly outbox: Outbox,
     private readonly rateLimiter: RateLimiter,
+    private readonly sessions: Sessions,
   ) {}
+
+  /**
+   * ACC-03: email and password. Wrong credentials give one generic error that
+   * doesn't reveal whether the email exists. Returns the new session token.
+   */
+  async login(input: z.output<typeof LoginInput>, ip: string): Promise<{ user: User; token: string }> {
+    const limits = loginLimits(input.email, ip);
+    await this.rateLimiter.assertUnder(...limits);
+
+    const user = await this.prisma.user.findUnique({ where: { email: input.email } });
+    const passwordOk = user?.passwordHash
+      ? await verify(user.passwordHash, input.password)
+      : (await verify(await (dummyHash ??= hash('no-such-user')), input.password), false);
+
+    if (!user || !passwordOk || user.status === 'deleted') {
+      await this.rateLimiter.hit(...limits);
+      throw new ApiError(HttpStatus.UNAUTHORIZED, ErrorCode.INVALID_CREDENTIALS, 'Wrong email or password');
+    }
+    await this.rateLimiter.clear(limits[0]!.key);
+
+    // Only said after the right password, so it reveals nothing to a stranger.
+    if (!user.emailVerifiedAt || user.status === 'pending') {
+      throw new ApiError(HttpStatus.FORBIDDEN, ErrorCode.EMAIL_NOT_VERIFIED, 'Verify your email first');
+    }
+    if (user.status === 'suspended') {
+      throw new ApiError(HttpStatus.FORBIDDEN, ErrorCode.ACCOUNT_SUSPENDED, 'Account suspended');
+    }
+
+    return { user, token: await this.sessions.create(user.id, 'web') };
+  }
+
+  async logout(token: string | undefined): Promise<void> {
+    if (token) await this.sessions.revoke(token);
+  }
 
   /** ACC-01: creates a pending user and emails a verification code. */
   async signUp(input: z.output<typeof SignUpInput>, ip: string): Promise<{ email: string }> {
@@ -102,6 +155,19 @@ export class AuthService {
       data: { pseudo: user.pseudo, code, link },
     });
   }
+}
+
+/** What a user sees about themselves. */
+export function toMe(user: User): Me {
+  return {
+    id: user.id,
+    fullName: user.fullName,
+    pseudo: user.pseudo,
+    email: user.email,
+    phone: user.phone,
+    locale: user.locale,
+    isInstanceAdmin: user.isInstanceAdmin,
+  };
 }
 
 type Tx = Prisma.TransactionClient;

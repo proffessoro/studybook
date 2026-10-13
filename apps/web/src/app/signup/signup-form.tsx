@@ -40,7 +40,7 @@ export function SignUpForm() {
         },
       });
       if (data) {
-        router.push(`/verify-email?${new URLSearchParams({ email: data.email })}`);
+        router.push(`/verify-email?${new URLSearchParams({ email: data.email, sent: '1' })}`);
         return;
       }
       const fields = fieldErrorsOf(error);

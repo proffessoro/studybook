@@ -18,13 +18,15 @@ export function fieldErrorsOf(error: ApiError | undefined): FieldErrors {
  */
 export function useApiErrorMessages() {
   const t = useTranslations('Errors');
+  // Keys built from API codes can't be checked at compile time; `has` checks them at runtime instead.
+  const dynamic = t as unknown as { (key: string): string; has(key: string): boolean };
 
   return {
     field(field: string, codes: string[] | undefined): string | undefined {
       const code = codes?.[0];
       if (!code) return undefined;
-      if (t.has(`fields.${field}.${code}`)) return t(`fields.${field}.${code}`);
-      if (t.has(`field.${code}`)) return t(`field.${code}`);
+      if (dynamic.has(`fields.${field}.${code}`)) return dynamic(`fields.${field}.${code}`);
+      if (dynamic.has(`field.${code}`)) return dynamic(`field.${code}`);
       return t('field.invalid');
     },
     api(error: ApiError): string {
@@ -32,7 +34,7 @@ export function useApiErrorMessages() {
         const seconds = Number((error.details as { retryAfterSeconds?: number } | undefined)?.retryAfterSeconds ?? 60);
         return t('api.RATE_LIMITED', { minutes: Math.max(1, Math.ceil(seconds / 60)) });
       }
-      return t.has(`api.${error.code}`) ? t(`api.${error.code}`) : t('api.unknown');
+      return dynamic.has(`api.${error.code}`) ? dynamic(`api.${error.code}`) : t('api.unknown');
     },
     network(): string {
       return t('api.network');
