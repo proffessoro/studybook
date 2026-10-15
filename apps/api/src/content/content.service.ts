@@ -40,6 +40,7 @@ function toAttachment(id: string, file: File): LessonAttachment {
     mime: file.mime,
     sizeBytes: Number(file.sizeBytes),
     url: `/api/v1/files/${file.id}`,
+    processing: file.processingStatus as LessonAttachment['processing'],
   };
 }
 

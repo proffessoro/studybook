@@ -87,6 +87,7 @@ describe('lesson files and lesson views (CNT-02, CNT-03)', () => {
         mime: 'application/pdf',
         sizeBytes: 1000,
         url: `/api/v1/files/${pdf}`,
+        processing: 'ready',
       });
       await moderator.post(g(`/lessons/${lessonId}/attachments`), { fileId: audio });
       await leader.post(g(`/lessons/${lessonId}/attachments`), { fileId: video });

@@ -148,6 +148,8 @@ export const LessonAttachment = z
     sizeBytes: z.number(),
     /** Protected: needs a session with access to the group; supports ranges */
     url: z.string(),
+    /** Compression in the worker (CNT-04): until it is `ready`, members get the file as uploaded */
+    processing: z.enum(['pending', 'ready', 'failed']),
   })
   .meta({ id: 'LessonAttachment' });
 export type LessonAttachment = z.infer<typeof LessonAttachment>;

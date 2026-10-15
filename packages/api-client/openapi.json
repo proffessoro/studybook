@@ -4223,6 +4223,14 @@
           },
           "url": {
             "type": "string"
+          },
+          "processing": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "ready",
+              "failed"
+            ]
           }
         },
         "required": [
@@ -4231,7 +4239,8 @@
           "filename",
           "mime",
           "sizeBytes",
-          "url"
+          "url",
+          "processing"
         ]
       },
       "LessonView": {

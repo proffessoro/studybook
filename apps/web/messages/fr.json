@@ -432,7 +432,9 @@
     "cancel": "Annuler",
     "openPdf": "Ouvrir",
     "download": "Télécharger ({size})",
-    "noPlayer": "Votre navigateur ne peut pas lire ce fichier. Téléchargez-le plutôt."
+    "noPlayer": "Votre navigateur ne peut pas lire ce fichier. Téléchargez-le plutôt.",
+    "compressing": "Compression…",
+    "compressFailed": "Impossible de le compresser ; les membres reçoivent le fichier tel quel."
   },
   "LessonViews": {
     "summary": "{viewed, plural, =0 {Aucun membre n'a encore ouvert cette leçon} one {# membre sur {total} a ouvert cette leçon} other {# membres sur {total} ont ouvert cette leçon}}",

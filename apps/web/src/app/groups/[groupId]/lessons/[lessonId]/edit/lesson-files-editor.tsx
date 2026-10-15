@@ -140,7 +140,9 @@ export function LessonFilesEditor({ groupId, lessonId, attachments }: { groupId:
                 <p className="break-words">{file.filename}</p>
                 <p className="text-xs text-muted-foreground">
                   {t(`kind.${file.kind}`)} · {formatFileSize(format, file.sizeBytes)}
+                  {file.processing === 'pending' && ` · ${t('compressing')}`}
                 </p>
+                {file.processing === 'failed' && <p className="text-xs text-muted-foreground">{t('compressFailed')}</p>}
               </div>
               <div className="flex shrink-0">
                 <Button size="icon" variant="ghost" onClick={() => move(index, -1)} disabled={index === 0 || busy} aria-label={t('moveUp', { name: file.filename })}>

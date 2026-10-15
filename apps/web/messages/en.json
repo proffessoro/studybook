@@ -432,7 +432,9 @@
     "cancel": "Cancel",
     "openPdf": "Open",
     "download": "Download ({size})",
-    "noPlayer": "Your browser can't play this file. Download it instead."
+    "noPlayer": "Your browser can't play this file. Download it instead.",
+    "compressing": "Compressing…",
+    "compressFailed": "Couldn't be compressed; members get the file as uploaded."
   },
   "LessonViews": {
     "summary": "{viewed, plural, =0 {No member opened this lesson yet} one {# of {total} members opened this lesson} other {# of {total} members opened this lesson}}",

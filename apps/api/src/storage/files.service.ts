@@ -18,7 +18,9 @@ import { ApiError } from '../common/api-error.js';
 import type { File, Group, User } from '../generated/prisma/client.js';
 import { canAccessGroup } from '../groups/group-access.guard.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { MediaQueue } from './media-queue.js';
 import { StorageDriver, TooManyBytesError } from './storage-driver.js';
+import { OUTPUTS } from './media-outputs.js';
 
 /** How long the client has to send the bytes after asking to upload. */
 const RESERVATION_MS = 60 * 60 * 1000;
@@ -50,6 +52,7 @@ export class FilesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly storage: StorageDriver,
+    private readonly media: MediaQueue,
   ) {}
 
   async request(group: Group, user: User, input: z.output<typeof RequestUploadInput>): Promise<UploadTicket> {
@@ -123,10 +126,17 @@ export class FilesService {
         });
       }
 
+      const process = await this.processes(file.kind);
       const ready = await this.prisma.file.update({
         where: { id: file.id },
-        data: { status: 'ready', mime: detected.mime, reservedUntil: null },
+        data: { status: 'ready', mime: detected.mime, reservedUntil: null, processingStatus: process ? 'pending' : 'ready' },
       });
+      if (process) {
+        // Served as uploaded until the worker is done. If Valkey is down, the worker queues it again when it starts.
+        await this.media.add(ready.id, ready.kind).catch((error: unknown) => {
+          this.logger.warn(`Could not queue ${ready.id} for processing: ${(error as Error).message}`);
+        });
+      }
       return toFileView(ready);
     } catch (error) {
       await this.discard(file);
@@ -174,20 +184,33 @@ export class FilesService {
     return expired.length;
   }
 
-  /** Removes the bytes and the row, and gives the bytes back to the group's quota. */
+  /** Removes the row and the bytes, and gives the bytes back to the group's quota. */
   async discard(file: File): Promise<void> {
-    await this.storage.delete(file.storageKey).catch((error: unknown) => {
-      this.logger.warn(`Could not delete ${file.storageKey}: ${(error as Error).message}`);
-    });
-    await this.prisma.$transaction(async (tx) => {
-      const { count } = await tx.file.deleteMany({ where: { id: file.id } });
+    // The row as it is now: processing may have swapped in a smaller file since `file` was read.
+    const removed = await this.prisma.$transaction(async (tx) => {
+      const rows = await tx.$queryRaw<{ storage_key: string; size_bytes: bigint }[]>`
+        DELETE FROM files WHERE id = ${file.id}::uuid RETURNING storage_key, size_bytes`;
       // Only the call that removed the row gives the bytes back, even if two run at once.
-      if (count === 1) {
+      if (rows[0]) {
         await tx.$executeRaw`
-          UPDATE groups SET storage_used_bytes = GREATEST(storage_used_bytes - ${file.sizeBytes}, 0)
+          UPDATE groups SET storage_used_bytes = GREATEST(storage_used_bytes - ${rows[0].size_bytes}, 0)
           WHERE id = ${file.groupId}::uuid`;
       }
+      return rows[0];
     });
+    for (const key of new Set([file.storageKey, removed?.storage_key ?? file.storageKey])) {
+      await this.storage.delete(key).catch((error: unknown) => {
+        this.logger.warn(`Could not delete ${key}: ${(error as Error).message}`);
+      });
+    }
+  }
+
+  /** `instance_settings.media_processing`: "off", "images" (the default, light on CPU), or "all" (CNT-04). */
+  private async processes(kind: FileKind): Promise<boolean> {
+    if (!OUTPUTS[kind]) return false;
+    const settings = await this.prisma.instanceSettings.findUnique({ where: { id: 1 } });
+    const mode = settings?.mediaProcessing ?? 'images';
+    return mode === 'all' || (mode === 'images' && kind === 'image');
   }
 
   private async limitFor(kind: FileKind): Promise<number> {

@@ -1166,6 +1166,8 @@ export interface components {
             mime: string;
             sizeBytes: number;
             url: string;
+            /** @enum {string} */
+            processing: "pending" | "ready" | "failed";
         };
         LessonView: {
             id: string;
