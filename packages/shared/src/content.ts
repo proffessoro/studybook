@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FileKind } from './files.js';
 
 /**
  * Lesson text (CNT-02): headings, bold, lists, links, images. Stored as JSON in
@@ -131,6 +132,26 @@ export const CourseOutline = z
   .meta({ id: 'CourseOutline' });
 export type CourseOutline = z.infer<typeof CourseOutline>;
 
+/** The kinds a lesson can carry as attachments; images go inside the text instead. */
+export const ATTACHMENT_KINDS = ['pdf', 'audio', 'video'] as const satisfies readonly FileKind[];
+
+/** CNT-02. Attach an uploaded file (from `POST /groups/:id/uploads`) to a lesson. */
+export const AttachFileInput = z.object({ fileId: z.uuid() }).meta({ id: 'AttachFileInput' });
+export type AttachFileInput = z.input<typeof AttachFileInput>;
+
+export const LessonAttachment = z
+  .object({
+    id: z.string(),
+    kind: z.enum(ATTACHMENT_KINDS),
+    filename: z.string(),
+    mime: z.string(),
+    sizeBytes: z.number(),
+    /** Protected: needs a session with access to the group; supports ranges */
+    url: z.string(),
+  })
+  .meta({ id: 'LessonAttachment' });
+export type LessonAttachment = z.infer<typeof LessonAttachment>;
+
 export const LessonView = z
   .object({
     id: z.string(),
@@ -138,6 +159,8 @@ export const LessonView = z
     published: z.boolean(),
     /** Checked `RichText` */
     body: z.record(z.string(), z.unknown()),
+    /** PDFs, audio, and video, in order */
+    attachments: z.array(LessonAttachment),
     course: z.object({ id: z.string(), title: z.string() }),
     module: z.object({ id: z.string(), title: z.string() }),
     /** Neighbours in the course, for "previous" and "next" */
@@ -146,6 +169,17 @@ export const LessonView = z
   })
   .meta({ id: 'LessonView' });
 export type LessonView = z.infer<typeof LessonView>;
+
+/** CNT-03, leader only: which members opened a lesson. Members only (not the leader or moderators). */
+export const LessonViewers = z
+  .object({
+    viewedCount: z.number(),
+    memberCount: z.number(),
+    /** Members who opened it first (earliest first), then those who didn't (by pseudo) */
+    members: z.array(z.object({ userId: z.string(), pseudo: z.string(), firstViewedAt: z.string().nullable() })),
+  })
+  .meta({ id: 'LessonViewers' });
+export type LessonViewers = z.infer<typeof LessonViewers>;
 
 export const CreatedId = z.object({ id: z.string() }).meta({ id: 'CreatedId' });
 export type CreatedId = z.infer<typeof CreatedId>;

@@ -56,7 +56,7 @@ test.describe('courses and lessons', () => {
     await page.keyboard.type('Une boîte');
     await page.getByRole('button', { name: 'Gras' }).click();
     await page.keyboard.type(' qui garde une valeur.');
-    await page.locator('input[type="file"]').setInputFiles({ name: 'schema.png', mimeType: 'image/png', buffer: PNG });
+    await page.locator('input[type="file"][accept^="image/"]').setInputFiles({ name: 'schema.png', mimeType: 'image/png', buffer: PNG });
     await expect(editor.locator('img')).toHaveCount(1);
     await page.getByLabel('Publiée', { exact: true }).check();
     await page.getByRole('button', { name: 'Enregistrer' }).click();

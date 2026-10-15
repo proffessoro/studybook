@@ -175,7 +175,7 @@ export class FilesService {
   }
 
   /** Removes the bytes and the row, and gives the bytes back to the group's quota. */
-  private async discard(file: File): Promise<void> {
+  async discard(file: File): Promise<void> {
     await this.storage.delete(file.storageKey).catch((error: unknown) => {
       this.logger.warn(`Could not delete ${file.storageKey}: ${(error as Error).message}`);
     });

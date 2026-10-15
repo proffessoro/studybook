@@ -155,3 +155,14 @@ export const getLesson = cache(async (groupId: string, lessonId: string) => {
   });
   return data ?? null;
 });
+
+/** CNT-03, leader only: which members opened the lesson. Null for anyone else. */
+export const getLessonViewers = cache(async (groupId: string, lessonId: string) => {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/groups/{groupId}/lessons/{lessonId}/views', {
+    params: { path: { groupId, lessonId } },
+    headers: { cookie: cookieHeader },
+    cache: 'no-store',
+  });
+  return data ?? null;
+});

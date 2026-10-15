@@ -104,3 +104,12 @@ export async function apiSession(playwright: { request: { newContext: (options: 
   expect(res.status()).toBe(200);
   return context;
 }
+
+/** Sets a group's storage quota in the development database (there is no admin screen before step 1.8). */
+export function setStorageQuota(groupId: string, bytes: number): void {
+  if (!/^[0-9a-f-]{36}$/.test(groupId)) throw new Error(`Not a group id: ${groupId}`);
+  execSync(
+    `docker compose -f "${devCompose}" exec -T postgres psql -U studybook -d studybook -c "UPDATE groups SET storage_quota_bytes = ${Math.floor(bytes)} WHERE id = '${groupId}'"`,
+    { stdio: 'pipe' },
+  );
+}

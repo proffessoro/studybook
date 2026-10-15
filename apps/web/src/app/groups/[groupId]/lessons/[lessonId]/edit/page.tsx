@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server';
 import { ArrowLeftIcon } from 'lucide-react';
 import { getGroup, getLesson, getMe } from '@/lib/server-api';
 import { LessonEditorLoader } from './lesson-editor-loader';
+import { LessonFilesEditor } from './lesson-files-editor';
 
 type Props = { params: Promise<{ groupId: string; lessonId: string }> };
 
@@ -33,6 +34,7 @@ export default async function EditLessonPage({ params }: Props) {
       </Link>
       <h1 className="sr-only">{t('editLesson')}</h1>
       <LessonEditorLoader groupId={group.id} lesson={lesson} />
+      <LessonFilesEditor groupId={group.id} lessonId={lesson.id} attachments={lesson.attachments} />
     </main>
   );
 }

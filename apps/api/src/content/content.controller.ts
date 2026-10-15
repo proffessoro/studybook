@@ -2,11 +2,14 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import type { z } from 'zod';
 import {
+  AttachFileInput,
   CourseList,
   CourseOutline,
   CreateCourseInput,
   CreatedId,
+  LessonAttachment,
   LessonView,
+  LessonViewers,
   ReorderInput,
   TitleInput,
   UpdateCourseInput,
@@ -192,5 +195,62 @@ export class ContentController {
   @ApiResponse(done)
   async deleteLesson(@CurrentGroup() group: Group, @Param('lessonId') lessonId: string) {
     await this.content.deleteLesson(group, lessonId);
+  }
+
+  /** CNT-02. Attach a PDF, audio, or video file uploaded with `POST /groups/:id/uploads`. */
+  @Post('lessons/:lessonId/attachments')
+  @GroupRoute('content.manage')
+  @ApiParam({ name: 'lessonId', type: String })
+  @ApiZodBody(AttachFileInput)
+  @ApiZodResponse(201, LessonAttachment, 'Attached, at the end')
+  attach(
+    @CurrentGroup() group: Group,
+    @Param('lessonId') lessonId: string,
+    @Body(new ZodValidationPipe(AttachFileInput)) body: z.output<typeof AttachFileInput>,
+  ): Promise<LessonAttachment> {
+    return this.content.attach(group, lessonId, body.fileId);
+  }
+
+  @Put('lessons/:lessonId/attachments/order')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @GroupRoute('content.manage')
+  @ApiParam({ name: 'lessonId', type: String })
+  @ApiZodBody(ReorderInput)
+  @ApiResponse(done)
+  async reorderAttachments(
+    @CurrentGroup() group: Group,
+    @Param('lessonId') lessonId: string,
+    @Body(new ZodValidationPipe(ReorderInput)) body: z.output<typeof ReorderInput>,
+  ) {
+    await this.content.reorderAttachments(group, lessonId, body.ids);
+  }
+
+  @Delete('lessons/:lessonId/attachments/:attachmentId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @GroupRoute('content.manage')
+  @ApiParam({ name: 'lessonId', type: String })
+  @ApiParam({ name: 'attachmentId', type: String })
+  @ApiResponse({ status: 204, description: 'Removed; the file is deleted and its bytes come back to the quota' })
+  async detach(@CurrentGroup() group: Group, @Param('lessonId') lessonId: string, @Param('attachmentId') attachmentId: string) {
+    await this.content.detach(group, lessonId, attachmentId);
+  }
+
+  /** CNT-03. The caller opened the lesson; only the first time is kept. */
+  @Post('lessons/:lessonId/view')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @GroupRoute('group.view')
+  @ApiParam({ name: 'lessonId', type: String })
+  @ApiResponse(done)
+  async recordView(@CurrentGroup() group: Group, @CurrentMembership() membership: Membership, @Param('lessonId') lessonId: string) {
+    await this.content.recordView(group, membership, lessonId);
+  }
+
+  /** CNT-03, leader only: which members opened the lesson. */
+  @Get('lessons/:lessonId/views')
+  @GroupRoute('dashboard.view')
+  @ApiParam({ name: 'lessonId', type: String })
+  @ApiZodResponse(200, LessonViewers, 'Members, and when each first opened the lesson')
+  viewers(@CurrentGroup() group: Group, @Param('lessonId') lessonId: string): Promise<LessonViewers> {
+    return this.content.viewers(group, lessonId);
   }
 }

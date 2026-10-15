@@ -130,7 +130,7 @@ export function LessonEditor({ groupId, lesson }: { groupId: string; lesson: Les
     setError(undefined);
     const result = await uploadFile(groupId, file, 'image');
     if ('file' in result) editor.chain().focus().setImage({ src: result.file.url, alt: '' }).run();
-    else setError(result.error === 'network' ? messages.network() : messages.api(result.error));
+    else setError(typeof result.error === 'string' ? messages.network() : messages.api(result.error));
     setUploading(false);
   }
 

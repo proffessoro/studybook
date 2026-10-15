@@ -410,5 +410,33 @@
     "lessonNav": "Lessons",
     "previous": "Previous",
     "next": "Next"
+  },
+  "LessonFiles": {
+    "title": "Files",
+    "hint": "PDFs, audio, and video members open with the lesson.",
+    "add": "Add a file",
+    "uploading": "Sending {name}…",
+    "progress": "Progress of {name}",
+    "cancelUpload": "Cancel",
+    "wrongType": "Only PDF, audio, and video files can be added here.",
+    "kind": {
+      "pdf": "PDF",
+      "audio": "Audio",
+      "video": "Video"
+    },
+    "moveUp": "Move {name} up",
+    "moveDown": "Move {name} down",
+    "remove": "Remove {name}",
+    "removeConfirm": "This deletes the file for good and frees its space.",
+    "removeButton": "Remove",
+    "cancel": "Cancel",
+    "openPdf": "Open",
+    "download": "Download ({size})",
+    "noPlayer": "Your browser can't play this file. Download it instead."
+  },
+  "LessonViews": {
+    "summary": "{viewed, plural, =0 {No member opened this lesson yet} one {# of {total} members opened this lesson} other {# of {total} members opened this lesson}}",
+    "noMembers": "The group has no members yet.",
+    "notYet": "Not yet"
   }
 }

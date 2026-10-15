@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/lib/api';
 import { useApiErrorMessages } from '@/lib/api-errors';
+import { moved } from '@/lib/reorder';
 
 type ApiResult = { error?: Parameters<ReturnType<typeof useApiErrorMessages>['api']>[0] };
 
@@ -30,14 +31,6 @@ function takeTitle(form: HTMLFormElement): string {
 function putBack(form: HTMLFormElement, title: string): void {
   const input = form.elements.namedItem('title') as HTMLInputElement | null;
   if (input && !input.value) input.value = title;
-}
-
-/** Moves the item at `index` by `delta` and returns the ids in their new order. */
-function moved(ids: string[], index: number, delta: number): string[] {
-  const next = [...ids];
-  const [item] = next.splice(index, 1);
-  next.splice(index + delta, 0, item!);
-  return next;
 }
 
 /** CNT-01 for leaders and moderators: course details, modules, lessons, order, drafts. */

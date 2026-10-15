@@ -77,6 +77,7 @@ model User {
   createdInvites       InviteLink[]
   uploads              File[]
   joinRequests         JoinRequest[]
+  lessonViews          LessonView[]
 
   @@map("users")
 }
@@ -372,29 +373,30 @@ enum FileStatus {
 
 /// Design §4.3, §5.5. Every byte stored for a group is a row here, so quotas are exact.
 model File {
-  id               String     @id @default(uuid(7)) @db.Uuid
-  groupId          String     @map("group_id") @db.Uuid
-  group            Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  uploaderId       String     @map("uploader_id") @db.Uuid
-  uploader         User       @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  id               String            @id @default(uuid(7)) @db.Uuid
+  groupId          String            @map("group_id") @db.Uuid
+  group            Group             @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  uploaderId       String            @map("uploader_id") @db.Uuid
+  uploader         User              @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
   kind             FileKind
   /// Detected from the bytes, not trusted from the client
   mime             String
   /// The name it was uploaded with, for downloads
   filename         String
   /// What counts against the group's quota
-  sizeBytes        BigInt     @map("size_bytes")
+  sizeBytes        BigInt            @map("size_bytes")
   /// Where the storage driver keeps it, e.g. groups/<groupId>/<fileId>
-  storageKey       String     @unique @map("storage_key")
-  status           FileStatus @default(reserved)
+  storageKey       String            @unique @map("storage_key")
+  status           FileStatus        @default(reserved)
   /// A reservation nobody uploads to is released after this
-  reservedUntil    DateTime?  @map("reserved_until")
+  reservedUntil    DateTime?         @map("reserved_until")
   /// Background processing (step 1.4d): pending / ready / failed
-  processingStatus String     @default("ready") @map("processing_status")
+  processingStatus String            @default("ready") @map("processing_status")
   /// Smaller renditions, e.g. { "480p": { "key": …, "sizeBytes": … } }
-  variants         Json       @default("{}")
-  createdAt        DateTime   @default(now()) @map("created_at")
-  updatedAt        DateTime   @updatedAt @map("updated_at")
+  variants         Json              @default("{}")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  lessonAttachment LessonAttachment?
 
   @@index([groupId])
   @@index([status, reservedUntil])
@@ -435,17 +437,47 @@ model CourseModule {
 
 /// CNT-02. The body is rich text stored as checked JSON (never raw HTML).
 model Lesson {
-  id        String       @id @default(uuid(7)) @db.Uuid
-  moduleId  String       @map("module_id") @db.Uuid
-  module    CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  title     String
-  body      Json         @default("{\"type\":\"doc\",\"content\":[]}")
-  position  Int          @default(0)
+  id          String             @id @default(uuid(7)) @db.Uuid
+  moduleId    String             @map("module_id") @db.Uuid
+  module      CourseModule       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title       String
+  body        Json               @default("{\"type\":\"doc\",\"content\":[]}")
+  position    Int                @default(0)
   /// Drafts are hidden from members
-  published Boolean      @default(false)
-  createdAt DateTime     @default(now()) @map("created_at")
-  updatedAt DateTime     @updatedAt @map("updated_at")
+  published   Boolean            @default(false)
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
+  attachments LessonAttachment[]
+  views       LessonView[]
 
   @@index([moduleId, position])
   @@map("lessons")
+}
+
+/// CNT-02. A PDF, audio, or video file shown with a lesson. The kind is the file's own.
+/// A file belongs to at most one lesson; removing the attachment deletes the file.
+model LessonAttachment {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  lessonId  String   @map("lesson_id") @db.Uuid
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  fileId    String   @unique @map("file_id") @db.Uuid
+  file      File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  position  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([lessonId, position])
+  @@map("lesson_attachments")
+}
+
+/// CNT-03. The first time a member opened a published lesson.
+model LessonView {
+  lessonId      String   @map("lesson_id") @db.Uuid
+  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  userId        String   @map("user_id") @db.Uuid
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstViewedAt DateTime @default(now()) @map("first_viewed_at")
+
+  @@id([lessonId, userId])
+  @@index([userId])
+  @@map("lesson_views")
 }
