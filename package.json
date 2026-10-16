@@ -12,10 +12,16 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "db:up": "docker compose -f deploy/docker-compose.dev.yml up -d",
-    "db:down": "docker compose -f deploy/docker-compose.dev.yml down"
+    "db:down": "docker compose -f deploy/docker-compose.dev.yml down",
+    "lint": "turbo run lint",
+    "test:e2e": "pnpm --filter @studybook/web test:e2e"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
     "turbo": "2.11.7",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1"
   }
 }

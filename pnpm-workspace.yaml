@@ -8,6 +8,8 @@ allowBuilds:
   '@prisma/engines': true
   '@swc/core': true
   prisma: true
+  # Only picks a native binary, which already comes as an optional dependency.
+  unrs-resolver: false
 
 # Keep transitive dependencies off releases that are only hours old.
 overrides:
