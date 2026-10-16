@@ -29,10 +29,36 @@ export class RateLimiter {
       if (count > limit.max) retryAfterSeconds = Math.max(retryAfterSeconds, ttl);
     });
 
-    if (retryAfterSeconds > 0) {
-      throw new ApiError(HttpStatus.TOO_MANY_REQUESTS, ErrorCode.RATE_LIMITED, 'Too many requests', {
-        retryAfterSeconds,
-      });
-    }
+    if (retryAfterSeconds > 0) throw rateLimited(retryAfterSeconds);
   }
+
+  /** Throws `RATE_LIMITED` if any limit is already reached, without counting a hit. For counting failures only. */
+  async assertUnder(...limits: Limit[]): Promise<void> {
+    const multi = this.redis.multi();
+    for (const { key } of limits) multi.get(`rl:${key}`).ttl(`rl:${key}`);
+    const results = (await multi.exec()) ?? [];
+
+    let retryAfterSeconds = 0;
+    limits.forEach((limit, i) => {
+      const count = Number(results[i * 2]?.[1] ?? 0);
+      const ttl = Number(results[i * 2 + 1]?.[1]);
+      if (count >= limit.max) retryAfterSeconds = Math.max(retryAfterSeconds, ttl);
+    });
+    if (retryAfterSeconds > 0) throw rateLimited(retryAfterSeconds);
+  }
+
+  /** Counts one hit against every limit, e.g. a failed login. */
+  async hit(...limits: Limit[]): Promise<void> {
+    const multi = this.redis.multi();
+    for (const { key, windowSeconds } of limits) multi.incr(`rl:${key}`).expire(`rl:${key}`, windowSeconds, 'NX');
+    await multi.exec();
+  }
+
+  async clear(...keys: string[]): Promise<void> {
+    await this.redis.del(...keys.map((key) => `rl:${key}`));
+  }
+}
+
+function rateLimited(retryAfterSeconds: number) {
+  return new ApiError(HttpStatus.TOO_MANY_REQUESTS, ErrorCode.RATE_LIMITED, 'Too many requests', { retryAfterSeconds });
 }

@@ -14,7 +14,15 @@ import { fieldErrorsOf, useApiErrorMessages } from '@/lib/api-errors';
  * and code, and the form submits itself. Email scanners that prefetch links
  * don't run JavaScript, so they can't use up the code.
  */
-export function VerifyEmailForm({ email: initialEmail, code: initialCode }: { email: string; code: string }) {
+export function VerifyEmailForm({
+  email: initialEmail,
+  code: initialCode,
+  justSent,
+}: {
+  email: string;
+  code: string;
+  justSent: boolean;
+}) {
   const t = useTranslations('VerifyEmail');
   const messages = useApiErrorMessages();
   const [email, setEmail] = useState(initialEmail);
@@ -76,7 +84,7 @@ export function VerifyEmailForm({ email: initialEmail, code: initialCode }: { em
         <p className="text-lg font-medium">{t('verified')}</p>
         <p className="text-muted-foreground">{t('verifiedNext')}</p>
         <Button size="lg" asChild>
-          <Link href="/">{t('home')}</Link>
+          <Link href={`/login?${new URLSearchParams({ email })}`}>{t('login')}</Link>
         </Button>
       </div>
     );
@@ -84,7 +92,7 @@ export function VerifyEmailForm({ email: initialEmail, code: initialCode }: { em
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
-      <p className="text-muted-foreground">{initialEmail ? t('sentTo', { email: initialEmail }) : t('intro')}</p>
+      <p className="text-muted-foreground">{justSent && initialEmail ? t('sentTo', { email: initialEmail }) : t('intro')}</p>
 
       <FormField id="email" label={t('email')}>
         <Input id="email" name="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />

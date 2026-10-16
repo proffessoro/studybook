@@ -1,7 +1,10 @@
-import { Body, Controller, HttpCode, HttpStatus, Ip, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Ip, Post, Req, Res } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { z } from 'zod';
 import {
+  LoginInput,
+  Me,
   ResendVerificationInput,
   SignUpInput,
   SignUpResult,
@@ -10,7 +13,9 @@ import {
 } from '@studybook/shared';
 import { ZodValidationPipe } from '../common/zod-validation.pipe.js';
 import { ApiZodBody, ApiZodResponse } from '../openapi/zod-openapi.js';
-import { AuthService } from './auth.service.js';
+import { AuthService, toMe } from './auth.service.js';
+import { sessionToken } from './session.guard.js';
+import { clearSessionCookie, setSessionCookie } from './sessions.js';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -48,5 +53,27 @@ export class AuthController {
     @Ip() ip: string,
   ): Promise<void> {
     await this.auth.resendVerification(body, ip);
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @ApiZodBody(LoginInput)
+  @ApiZodResponse(200, Me, 'Logged in; the session cookie is set')
+  async login(
+    @Body(new ZodValidationPipe(LoginInput)) body: z.output<typeof LoginInput>,
+    @Ip() ip: string,
+    @Res({ passthrough: true }) reply: FastifyReply,
+  ): Promise<Me> {
+    const { user, token } = await this.auth.login(body, ip);
+    setSessionCookie(reply, token);
+    return toMe(user);
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiResponse({ status: 204, description: 'Session ended (also fine without one)' })
+  async logout(@Req() request: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply): Promise<void> {
+    await this.auth.logout(sessionToken(request));
+    clearSessionCookie(reply);
   }
 }

@@ -8,7 +8,10 @@
     "label": "Main navigation",
     "open": "Open menu",
     "home": "Home",
-    "signup": "Sign up"
+    "signup": "Sign up",
+    "login": "Log in",
+    "logout": "Log out",
+    "account": "Account of {pseudo}"
   },
   "LanguageSwitcher": {
     "label": "Change language",
@@ -47,8 +50,8 @@
     "resend": "Send a new code",
     "resent": "If {email} is waiting for verification, a new code is on its way.",
     "verified": "Your email is verified.",
-    "verifiedNext": "Your account is active. Logging in is coming in the next update.",
-    "home": "Go to the home page"
+    "verifiedNext": "Your account is active. You can now log in.",
+    "login": "Log in"
   },
   "Errors": {
     "field": {
@@ -92,7 +95,20 @@
       "VERIFICATION_CODE_EXPIRED": "This code has expired. Ask for a new one below.",
       "INTERNAL_ERROR": "Something went wrong on our side. Please try again.",
       "network": "Can't reach the server. Check your connection and try again.",
-      "unknown": "Something went wrong. Please try again."
+      "unknown": "Something went wrong. Please try again.",
+      "INVALID_CREDENTIALS": "Wrong email or password.",
+      "ACCOUNT_SUSPENDED": "This account is suspended. Contact the administrator of this server."
     }
+  },
+  "Login": {
+    "title": "Log in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Log in",
+    "submitting": "Logging in…",
+    "fillBoth": "Enter your email and password.",
+    "notVerified": "Your email isn't verified yet. Enter the code we emailed you, or ask for a new one.",
+    "verifyNow": "Verify my email",
+    "noAccount": "No account yet? <link>Sign up</link>"
   }
 }
