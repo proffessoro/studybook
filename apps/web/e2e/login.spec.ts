@@ -14,7 +14,7 @@ test.describe('login', () => {
 
     const account = page.getByRole('button', { name: `Compte de ${user.pseudo}` });
     await expect(account).toBeVisible();
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/groups');
 
     await page.reload();
     await expect(account).toBeVisible();
@@ -58,9 +58,9 @@ test.describe('login', () => {
     await page.getByLabel('Email').fill(user.email);
     await page.getByLabel('Mot de passe').fill(PASSWORD);
     await page.getByRole('button', { name: 'Se connecter' }).click();
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/groups');
 
     await page.goto('/login');
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/groups');
   });
 });

@@ -72,6 +72,8 @@ model User {
   verificationCodes    VerificationCode[]
   sessions             Session[]
   oauthAccounts        OAuthAccount[]
+  ownedGroups          Group[]
+  memberships          Membership[]
 
   @@map("users")
 }
@@ -158,4 +160,96 @@ model OAuthAccount {
   @@unique([provider, providerUserId])
   @@unique([userId, provider])
   @@map("oauth_accounts")
+}
+
+enum GroupVisibility {
+  /// Reachable only through an invite link (the default)
+  private
+  /// Shown in the catalogue (GRP-04)
+  listed
+
+  @@map("group_visibility")
+}
+
+enum ProgressVisibility {
+  /// Members see only their own progress
+  own
+  /// Members see everyone's points board (TRK-04)
+  all
+
+  @@map("progress_visibility")
+}
+
+enum GroupStatus {
+  active
+  /// Read-only (GRP-05)
+  archived
+
+  @@map("group_status")
+}
+
+/// Design §4.2. Quota and member cap are copied from the instance defaults at creation; null = unlimited.
+model Group {
+  id                     String             @id @default(uuid(7)) @db.Uuid
+  ownerId                String             @map("owner_id") @db.Uuid
+  owner                  User               @relation(fields: [ownerId], references: [id])
+  name                   String
+  /// For readable catalogue URLs (GRP-04)
+  slug                   String             @unique
+  description            String             @default("")
+  visibility             GroupVisibility    @default(private)
+  inviteRequiresApproval Boolean            @default(false) @map("invite_requires_approval")
+  progressVisibility     ProgressVisibility @default(own) @map("progress_visibility")
+  feedEnabled            Boolean            @default(true) @map("feed_enabled")
+  /// Shown as a label only; the interface follows each user's own language (GRP-02)
+  languageLabel          String?            @map("language_label")
+  status                 GroupStatus        @default(active)
+  /// Phase 2 paid upgrades change these per group (LIM-04)
+  storageQuotaBytes      BigInt?            @map("storage_quota_bytes")
+  storageUsedBytes       BigInt             @default(0) @map("storage_used_bytes")
+  memberCap              Int?               @map("member_cap")
+  createdAt              DateTime           @default(now()) @map("created_at")
+  updatedAt              DateTime           @updatedAt @map("updated_at")
+  memberships            Membership[]
+
+  @@index([ownerId])
+  @@map("groups")
+}
+
+enum GroupRole {
+  leader
+  moderator
+  member
+
+  @@map("group_role")
+}
+
+enum MembershipStatus {
+  active
+  left
+  removed
+  banned
+
+  @@map("membership_status")
+}
+
+/// Design §4.2. One row per user and group, kept after leaving so the leader keeps the history (MEM-05).
+model Membership {
+  id              String           @id @default(uuid(7)) @db.Uuid
+  groupId         String           @map("group_id") @db.Uuid
+  group           Group            @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId          String           @map("user_id") @db.Uuid
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role            GroupRole        @default(member)
+  status          MembershipStatus @default(active)
+  /// Tasks published before this don't apply to the member (TSK-07)
+  joinedAt        DateTime         @default(now()) @map("joined_at")
+  /// Unused in Phase 1: the seam for Phase 2 subscriptions (design §9)
+  accessExpiresAt DateTime?        @map("access_expires_at")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  @@unique([groupId, userId])
+  @@index([userId, status])
+  @@map("memberships")
 }

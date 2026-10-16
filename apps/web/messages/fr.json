@@ -12,7 +12,8 @@
     "login": "Se connecter",
     "logout": "Se déconnecter",
     "account": "Compte de {pseudo}",
-    "profile": "Mon profil"
+    "profile": "Mon profil",
+    "groups": "Mes groupes"
   },
   "LanguageSwitcher": {
     "label": "Changer de langue",
@@ -93,6 +94,10 @@
         "invalid_format": "Saisissez une adresse email valide.",
         "taken": "Un compte utilise déjà cet email.",
         "same": "C'est déjà votre email."
+      },
+      "name": {
+        "too_small": "Utilisez au moins 3 caractères.",
+        "too_big": "Utilisez au plus 80 caractères."
       }
     },
     "api": {
@@ -106,7 +111,10 @@
       "ACCOUNT_SUSPENDED": "Ce compte est suspendu. Contactez l'administrateur de ce serveur.",
       "RESET_LINK_INVALID": "Ce lien a expiré ou a déjà été utilisé.",
       "WRONG_PASSWORD": "Ce mot de passe est incorrect.",
-      "GOOGLE_SIGNUP_EXPIRED": "Cette étape a expiré. Recommencez avec Google."
+      "GOOGLE_SIGNUP_EXPIRED": "Cette étape a expiré. Recommencez avec Google.",
+      "GROUP_ARCHIVED": "Ce groupe est archivé, rien ne peut être modifié.",
+      "FORBIDDEN": "Vous n'avez pas le droit de faire ceci.",
+      "NOT_FOUND": "Cette page n'existe plus."
     }
   },
   "Login": {
@@ -174,5 +182,58 @@
     "expired": "Cette étape a expiré. Recommencez avec Google.",
     "startAgain": "Recommencer avec Google",
     "useEmail": "S'inscrire plutôt avec un email"
+  },
+  "Groups": {
+    "title": "Mes groupes",
+    "create": "Créer un groupe",
+    "emptyTitle": "Vous n'êtes encore dans aucun groupe.",
+    "emptyText": "Créez-en un et invitez des gens, ou ouvrez un lien d'invitation qu'on vous a partagé.",
+    "roles": {
+      "leader": "Responsable",
+      "moderator": "Modérateur",
+      "member": "Membre"
+    },
+    "memberCount": "{count, plural, one {# membre} other {# membres}}",
+    "archived": "Archivé",
+    "archivedNotice": "Ce groupe est archivé : vous pouvez tout lire, mais rien ne peut être modifié.",
+    "settings": "Paramètres",
+    "newTitle": "Créer un groupe",
+    "newIntro": "Vous en serez le responsable. Vous pourrez tout modifier plus tard.",
+    "name": "Nom",
+    "description": "Description",
+    "descriptionHint": "Le sujet du groupe, et ce que les membres vont faire.",
+    "languageLabel": "Langue du groupe",
+    "languageLabelHint": "Affichée comme une étiquette, par ex. « Français » ou « English ». Chaque membre voit Studybook dans sa propre langue.",
+    "createSubmit": "Créer le groupe",
+    "creating": "Création…"
+  },
+  "GroupSettings": {
+    "title": "Paramètres du groupe",
+    "visibility": "Qui peut trouver le groupe",
+    "visibilityPrivate": "Privé",
+    "visibilityPrivateHint": "Seules les personnes ayant le lien d'invitation peuvent rejoindre.",
+    "visibilityListed": "Visible dans le catalogue",
+    "visibilityListedHint": "Tout le monde voit son nom et sa description et peut demander à rejoindre. Vous acceptez ou refusez.",
+    "progressVisibility": "Ce que les membres voient de la progression",
+    "progressOwn": "Seulement leur propre progression",
+    "progressAll": "Les points de tout le monde",
+    "progressAllHint": "Un classement avec les pseudos seulement. Jamais les noms, les contacts ni les preuves.",
+    "inviteApproval": "Valider les personnes qui utilisent le lien d'invitation",
+    "inviteApprovalHint": "Sinon, elles rejoignent tout de suite.",
+    "feedEnabled": "Fil du groupe",
+    "feedEnabledHint": "Les membres peuvent publier et commenter.",
+    "save": "Enregistrer les paramètres",
+    "saving": "Enregistrement…",
+    "saved": "Paramètres enregistrés.",
+    "archivedReadOnly": "Ce groupe est archivé, ses paramètres sont en lecture seule. Désarchivez-le pour les modifier.",
+    "dangerZone": "Archiver ou supprimer",
+    "archiveHint": "Archiver met le groupe en lecture seule. Vous pouvez l'annuler à tout moment.",
+    "archive": "Archiver le groupe",
+    "unarchiveHint": "Désarchiver permet aux membres d’agir à nouveau dans le groupe.",
+    "unarchive": "Désarchiver le groupe",
+    "deleteHint": "Supprimer efface définitivement le groupe, son contenu et ses membres.",
+    "deleteConfirm": "Pour supprimer, tapez le nom du groupe : {name}",
+    "delete": "Supprimer définitivement le groupe",
+    "deleteMismatch": "Le nom ne correspond pas."
   }
 }

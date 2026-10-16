@@ -533,6 +533,292 @@
           "profile"
         ]
       }
+    },
+    "/api/v1/groups": {
+      "post": {
+        "operationId": "GroupsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGroupInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Group created; you are its leader",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "groups"
+        ]
+      }
+    },
+    "/api/v1/me/groups": {
+      "get": {
+        "operationId": "GroupsController_mine",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The groups you belong to",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyGroups"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "groups"
+        ]
+      }
+    },
+    "/api/v1/groups/{groupId}": {
+      "get": {
+        "operationId": "GroupsController_view",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The group, as you see it",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "groups"
+        ]
+      },
+      "patch": {
+        "operationId": "GroupsController_update",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGroupInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Settings saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "groups"
+        ]
+      },
+      "delete": {
+        "operationId": "GroupsController_delete",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteGroupInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Group deleted"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "groups"
+        ]
+      }
+    },
+    "/api/v1/groups/{groupId}/archive": {
+      "post": {
+        "operationId": "GroupsController_archive",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The group is read-only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "groups"
+        ]
+      }
+    },
+    "/api/v1/groups/{groupId}/unarchive": {
+      "post": {
+        "operationId": "GroupsController_unarchive",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The group is active again",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "groups"
+        ]
+      }
     }
   },
   "info": {
@@ -567,6 +853,8 @@
               "RESET_LINK_INVALID",
               "GOOGLE_SIGNUP_EXPIRED",
               "GROUP_FULL",
+              "GROUP_ARCHIVED",
+              "CONFIRMATION_MISMATCH",
               "TASK_DEADLINE_PASSED",
               "TASK_NOT_APPLICABLE",
               "STORAGE_QUOTA_EXCEEDED",
@@ -965,6 +1253,241 @@
           "phone",
           "locale",
           "acceptPrivacy"
+        ],
+        "additionalProperties": false
+      },
+      "CreateGroupInput": {
+        "$id": "#/components/schemas/CreateGroupInput",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          },
+          "description": {
+            "default": "",
+            "type": "string",
+            "maxLength": 2000
+          },
+          "languageLabel": {
+            "type": "string",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ],
+        "additionalProperties": false
+      },
+      "UpdateGroupInput": {
+        "$id": "#/components/schemas/UpdateGroupInput",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "private",
+              "listed"
+            ]
+          },
+          "inviteRequiresApproval": {
+            "type": "boolean"
+          },
+          "progressVisibility": {
+            "type": "string",
+            "enum": [
+              "own",
+              "all"
+            ]
+          },
+          "feedEnabled": {
+            "type": "boolean"
+          },
+          "languageLabel": {
+            "type": "string",
+            "maxLength": 40
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteGroupInput": {
+        "$id": "#/components/schemas/DeleteGroupInput",
+        "type": "object",
+        "properties": {
+          "confirmName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirmName"
+        ],
+        "additionalProperties": false
+      },
+      "GroupView": {
+        "$id": "#/components/schemas/GroupView",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "private",
+              "listed"
+            ]
+          },
+          "inviteRequiresApproval": {
+            "type": "boolean"
+          },
+          "progressVisibility": {
+            "type": "string",
+            "enum": [
+              "own",
+              "all"
+            ]
+          },
+          "feedEnabled": {
+            "type": "boolean"
+          },
+          "languageLabel": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "archived"
+            ]
+          },
+          "memberCount": {
+            "type": "number"
+          },
+          "memberCap": {
+            "nullable": true,
+            "type": "number"
+          },
+          "myRole": {
+            "type": "string",
+            "enum": [
+              "leader",
+              "moderator",
+              "member"
+            ]
+          },
+          "storage": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "usedBytes": {
+                "type": "number"
+              },
+              "quotaBytes": {
+                "nullable": true,
+                "type": "number"
+              }
+            },
+            "required": [
+              "usedBytes",
+              "quotaBytes"
+            ],
+            "additionalProperties": false
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "description",
+          "visibility",
+          "inviteRequiresApproval",
+          "progressVisibility",
+          "feedEnabled",
+          "languageLabel",
+          "status",
+          "memberCount",
+          "memberCap",
+          "myRole",
+          "storage",
+          "createdAt"
+        ],
+        "additionalProperties": false
+      },
+      "MyGroup": {
+        "$id": "#/components/schemas/MyGroup",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "archived"
+            ]
+          },
+          "myRole": {
+            "type": "string",
+            "enum": [
+              "leader",
+              "moderator",
+              "member"
+            ]
+          },
+          "memberCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "myRole",
+          "memberCount"
+        ],
+        "additionalProperties": false
+      },
+      "MyGroups": {
+        "$id": "#/components/schemas/MyGroups",
+        "type": "object",
+        "properties": {
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyGroup"
+            }
+          }
+        },
+        "required": [
+          "groups"
         ],
         "additionalProperties": false
       },

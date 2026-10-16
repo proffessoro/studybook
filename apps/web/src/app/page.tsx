@@ -1,8 +1,11 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Button } from '@/components/ui/button';
+import { getMe } from '@/lib/server-api';
 
 export default async function HomePage() {
+  if (await getMe()) redirect('/groups');
   const t = await getTranslations('Home');
 
   return (

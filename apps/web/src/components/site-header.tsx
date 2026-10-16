@@ -21,7 +21,7 @@ const visitorItems = [
   { href: '/login', key: 'login' },
   { href: '/signup', key: 'signup' },
 ] as const;
-const memberItems = [{ href: '/', key: 'home' }] as const;
+const memberItems = [{ href: '/groups', key: 'groups' }] as const;
 
 export async function SiteHeader() {
   const t = await getTranslations('Nav');
@@ -31,7 +31,7 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-5xl items-center gap-2 px-4">
-        <Link href="/" className="mr-auto text-lg font-bold">
+        <Link href={me ? '/groups' : '/'} className="mr-auto text-lg font-bold">
           Studybook
         </Link>
 
