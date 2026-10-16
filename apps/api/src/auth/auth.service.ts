@@ -214,14 +214,14 @@ export function toMe(user: User): Me {
 }
 
 type Tx = Prisma.TransactionClient;
-type Unique = { email: string; pseudo: string; phone: string };
+export type Unique = { email: string; pseudo: string; phone: string };
 
 /**
  * Unverified sign-ups can't squat: a new sign-up with the same email replaces
  * them (only the email's owner can verify it), and after 24 h they release
  * their pseudo and phone too.
  */
-async function releaseStalePending(tx: Tx, input: Unique): Promise<void> {
+export async function releaseStalePending(tx: Tx, input: Unique): Promise<void> {
   await tx.user.deleteMany({
     where: {
       status: 'pending',
@@ -238,7 +238,7 @@ async function releaseStalePending(tx: Tx, input: Unique): Promise<void> {
 }
 
 /** Reports every taken field at once, so the form can show them together. */
-async function throwIfTaken(tx: Tx, input: Unique): Promise<void> {
+export async function throwIfTaken(tx: Tx, input: Unique): Promise<void> {
   const existing = await tx.user.findMany({
     where: { OR: [{ email: input.email }, { pseudo: input.pseudo }, { phone: input.phone }] },
     select: { email: true, pseudo: true, phone: true },

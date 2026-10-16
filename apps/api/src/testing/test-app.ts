@@ -43,7 +43,7 @@ export async function createTestApp() {
     /** Empties every table and the rate-limit counters. */
     async reset() {
       outbox.sent.length = 0;
-      await prisma.$executeRawUnsafe('TRUNCATE users, verification_codes CASCADE');
+      await prisma.$executeRawUnsafe('TRUNCATE users CASCADE');
       await redis.flushdb();
     },
   };

@@ -164,6 +164,22 @@ export interface paths {
         patch: operations["ProfileController_update"];
         trace?: never;
     };
+    "/api/v1/auth/google/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GoogleController_draft"];
+        put?: never;
+        post: operations["GoogleController_complete"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me/email": {
         parameters: {
             query?: never;
@@ -202,7 +218,7 @@ export interface components {
     schemas: {
         ApiError: {
             /** @enum {string} */
-            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "INVALID_CREDENTIALS" | "WRONG_PASSWORD" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_SUSPENDED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "RESET_LINK_INVALID" | "GROUP_FULL" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
+            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "INVALID_CREDENTIALS" | "WRONG_PASSWORD" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_SUSPENDED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "RESET_LINK_INVALID" | "GOOGLE_SIGNUP_EXPIRED" | "GROUP_FULL" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
             message: string;
             details?: {
                 [key: string]: unknown;
@@ -284,6 +300,19 @@ export interface components {
         };
         ConfirmEmailChangeInput: {
             code: string;
+        };
+        GoogleSignupDraft: {
+            email: string;
+            fullName: string;
+        };
+        CompleteGoogleSignupInput: {
+            fullName: string;
+            pseudo: string;
+            phone: string;
+            /** @enum {string} */
+            locale: "fr" | "en";
+            /** @enum {boolean} */
+            acceptPrivacy: true;
         };
         HealthStatus: {
             /** @enum {string} */
@@ -619,6 +648,68 @@ export interface operations {
         responses: {
             /** @description The updated profile */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    GoogleController_draft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description What Google told us, to prefill the form */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GoogleSignupDraft"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    GoogleController_complete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompleteGoogleSignupInput"];
+            };
+        };
+        responses: {
+            /** @description Account created and logged in */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };

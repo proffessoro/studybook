@@ -12,6 +12,17 @@ async function serverApi() {
   return { client, cookieHeader };
 }
 
+/** This instance's name and enabled features (e.g. Google login). */
+export const getInstance = cache(async () => {
+  const { client } = await serverApi();
+  try {
+    const { data } = await client.GET('/api/v1/instance', { cache: 'no-store' });
+    return data ?? null;
+  } catch {
+    return null;
+  }
+});
+
 /** The logged-in user, or null. Called once per request however many components ask. */
 export const getMe = cache(async () => {
   const { client, cookieHeader } = await serverApi();

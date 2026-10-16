@@ -122,3 +122,15 @@ export const ConfirmEmailChangeInput = z
   .object({ code: z.string().regex(/^\d{6}$/) })
   .meta({ id: 'ConfirmEmailChangeInput' });
 export type ConfirmEmailChangeInput = z.input<typeof ConfirmEmailChangeInput>;
+
+/** What Google told us about a new user, to prefill the last sign-up step (ACC-04). */
+export const GoogleSignupDraft = z
+  .object({ email: z.string(), fullName: z.string() })
+  .meta({ id: 'GoogleSignupDraft' });
+export type GoogleSignupDraft = z.infer<typeof GoogleSignupDraft>;
+
+/** The last step for a new Google user: Google already verified the email, so no password. */
+export const CompleteGoogleSignupInput = SignUpInput.omit({ email: true, password: true }).meta({
+  id: 'CompleteGoogleSignupInput',
+});
+export type CompleteGoogleSignupInput = z.input<typeof CompleteGoogleSignupInput>;

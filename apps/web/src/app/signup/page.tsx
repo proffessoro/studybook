@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { GoogleButton } from '@/components/google-button';
 import { SignUpForm } from './signup-form';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,6 +17,7 @@ export default async function SignUpPage() {
         <h1 className="text-2xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">{t('intro')}</p>
       </div>
+      <GoogleButton />
       <SignUpForm />
     </main>
   );
