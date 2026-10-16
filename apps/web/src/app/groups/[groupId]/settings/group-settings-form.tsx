@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { GroupView } from '@studybook/shared';
 import { describedBy, FormField } from '@/components/form-field';
-import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/lib/api';
 import { type FieldErrors, fieldErrorsOf, useApiErrorMessages } from '@/lib/api-errors';
 
 /** GRP-02: how the group works. */
-export function GroupSettingsForm({ group }: { group: GroupView }) {
+export function GroupSettingsForm({ group, categories }: { group: GroupView; categories: { key: string; name: string }[] }) {
   const t = useTranslations('GroupSettings');
   const tGroups = useTranslations('Groups');
   const messages = useApiErrorMessages();
@@ -39,6 +39,11 @@ export function GroupSettingsForm({ group }: { group: GroupView }) {
           inviteRequiresApproval: form.get('inviteRequiresApproval') === 'on',
           progressVisibility: form.get('progressVisibility') === 'all' ? 'all' : 'own',
           feedEnabled: form.get('feedEnabled') === 'on',
+          categoryKeys: form.getAll('categoryKeys').map(String),
+          tags: String(form.get('tags') ?? '')
+            .split(',')
+            .map((tag) => tag.trim())
+            .filter(Boolean),
         },
       });
       if (data) {
@@ -57,9 +62,14 @@ export function GroupSettingsForm({ group }: { group: GroupView }) {
   }
 
   const err = (field: string) => messages.field(field, fieldErrors[field]);
+  // Tag errors come per tag (`tags.0`, `tags.1`…); show the first.
+  const fieldErrorsAt = (prefix: string) => {
+    const key = Object.keys(fieldErrors).find((k) => k.startsWith(prefix));
+    return key ? messages.field('tag', fieldErrors[key]) : undefined;
+  };
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
+    <form method="post" onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
       <FormField id="name" label={tGroups('name')} error={err('name')}>
         <Input id="name" name="name" defaultValue={group.name} required maxLength={80} {...describedBy('name', { error: err('name') })} />
       </FormField>
@@ -74,6 +84,31 @@ export function GroupSettingsForm({ group }: { group: GroupView }) {
         <Radio name="visibility" value="private" checked={group.visibility === 'private'} label={t('visibilityPrivate')} hint={t('visibilityPrivateHint')} />
         <Radio name="visibility" value="listed" checked={group.visibility === 'listed'} label={t('visibilityListed')} hint={t('visibilityListedHint')} />
       </Choice>
+
+      <fieldset className="flex flex-col gap-2" aria-describedby="categories-hint">
+        <legend className="mb-1 text-sm font-medium">{t('categories')}</legend>
+        <p id="categories-hint" className={err('categoryKeys') ? 'text-sm text-destructive' : 'text-sm text-muted-foreground'}>
+          {err('categoryKeys') ?? t('categoriesHint')}
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          {categories.map((category) => (
+            <label key={category.key} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="categoryKeys"
+                value={category.key}
+                defaultChecked={group.categoryKeys.includes(category.key)}
+                className="size-4"
+              />
+              {category.name}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <FormField id="tags" label={t('tags')} hint={t('tagsHint')} error={err('tags') ?? fieldErrorsAt('tags.')}>
+        <Input id="tags" name="tags" defaultValue={group.tags.join(', ')} placeholder="bepc, python, anglais" />
+      </FormField>
 
       <Choice legend={t('progressVisibility')}>
         <Radio name="progressVisibility" value="own" checked={group.progressVisibility === 'own'} label={t('progressOwn')} />
@@ -95,9 +130,9 @@ export function GroupSettingsForm({ group }: { group: GroupView }) {
           {t('saved')}
         </p>
       )}
-      <Button type="submit" size="lg" disabled={pending}>
+      <SubmitButton size="lg" pending={pending}>
         {pending ? t('saving') : t('save')}
-      </Button>
+      </SubmitButton>
     </form>
   );
 }

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { describedBy, FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { fieldErrorsOf, useApiErrorMessages } from '@/lib/api-errors';
@@ -64,7 +65,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+    <form method="post" onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
       <FormField id="password" label={t('password')} hint={t('passwordHint')} error={passwordError}>
         <Input
           id="password"
@@ -81,9 +82,9 @@ export function ResetPasswordForm({ token }: { token: string }) {
           {formError}
         </p>
       )}
-      <Button type="submit" size="lg" disabled={pending}>
+      <SubmitButton size="lg" pending={pending}>
         {pending ? t('submitting') : t('submit')}
-      </Button>
+      </SubmitButton>
     </form>
   );
 }

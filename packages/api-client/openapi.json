@@ -1302,6 +1302,298 @@
           "members"
         ]
       }
+    },
+    "/api/v1/categories": {
+      "get": {
+        "operationId": "CatalogueController_categories",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Interest categories, in display order",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryList"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "catalogue"
+        ]
+      }
+    },
+    "/api/v1/catalogue": {
+      "get": {
+        "operationId": "CatalogueController_list",
+        "parameters": [
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "A category key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Matches group names and tags",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "`nextCursor` from the previous page",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Listed groups, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CataloguePage"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "catalogue"
+        ]
+      }
+    },
+    "/api/v1/catalogue/{slug}": {
+      "get": {
+        "operationId": "CatalogueController_detail",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A listed group, and where the visitor stands",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogueGroupDetail"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "catalogue"
+        ]
+      }
+    },
+    "/api/v1/catalogue/{slug}/request": {
+      "post": {
+        "operationId": "CatalogueRequestController_request",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A request was sent to the leader (or you are already a member)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JoinResult"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "catalogue"
+        ]
+      }
+    },
+    "/api/v1/admin/categories": {
+      "post": {
+        "operationId": "CategoriesAdminController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/categories/{key}": {
+      "patch": {
+        "operationId": "CategoriesAdminController_update",
+        "parameters": [
+          {
+            "name": "key",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "admin"
+        ]
+      },
+      "delete": {
+        "operationId": "CategoriesAdminController_delete",
+        "parameters": [
+          {
+            "name": "key",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Category deleted"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "admin"
+        ]
+      }
     }
   },
   "info": {
@@ -1360,8 +1652,7 @@
         "required": [
           "code",
           "message"
-        ],
-        "additionalProperties": false
+        ]
       },
       "InstanceInfo": {
         "$id": "#/components/schemas/InstanceInfo",
@@ -1386,16 +1677,14 @@
             "required": [
               "googleLogin",
               "catalogue"
-            ],
-            "additionalProperties": false
+            ]
           }
         },
         "required": [
           "name",
           "version",
           "features"
-        ],
-        "additionalProperties": false
+        ]
       },
       "SignUpInput": {
         "$id": "#/components/schemas/SignUpInput",
@@ -1412,12 +1701,10 @@
           },
           "email": {
             "type": "string",
-            "format": "email",
-            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+            "maxLength": 254
           },
           "phone": {
-            "type": "string",
-            "pattern": "^\\+237[26]\\d{8}$"
+            "type": "string"
           },
           "password": {
             "type": "string",
@@ -1446,8 +1733,7 @@
           "password",
           "locale",
           "acceptPrivacy"
-        ],
-        "additionalProperties": false
+        ]
       },
       "SignUpResult": {
         "$id": "#/components/schemas/SignUpResult",
@@ -1459,8 +1745,7 @@
         },
         "required": [
           "email"
-        ],
-        "additionalProperties": false
+        ]
       },
       "VerifyEmailInput": {
         "$id": "#/components/schemas/VerifyEmailInput",
@@ -1468,8 +1753,7 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email",
-            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+            "maxLength": 254
           },
           "code": {
             "type": "string",
@@ -1479,8 +1763,7 @@
         "required": [
           "email",
           "code"
-        ],
-        "additionalProperties": false
+        ]
       },
       "VerifyEmailResult": {
         "$id": "#/components/schemas/VerifyEmailResult",
@@ -1495,8 +1778,7 @@
         },
         "required": [
           "status"
-        ],
-        "additionalProperties": false
+        ]
       },
       "ResendVerificationInput": {
         "$id": "#/components/schemas/ResendVerificationInput",
@@ -1504,14 +1786,12 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email",
-            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+            "maxLength": 254
           }
         },
         "required": [
           "email"
-        ],
-        "additionalProperties": false
+        ]
       },
       "LoginInput": {
         "$id": "#/components/schemas/LoginInput",
@@ -1519,8 +1799,7 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email",
-            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+            "maxLength": 254
           },
           "password": {
             "type": "string",
@@ -1531,8 +1810,7 @@
         "required": [
           "email",
           "password"
-        ],
-        "additionalProperties": false
+        ]
       },
       "Me": {
         "$id": "#/components/schemas/Me",
@@ -1573,8 +1851,7 @@
           "phone",
           "locale",
           "isInstanceAdmin"
-        ],
-        "additionalProperties": false
+        ]
       },
       "RecoverInput": {
         "$id": "#/components/schemas/RecoverInput",
@@ -1582,14 +1859,12 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email",
-            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+            "maxLength": 254
           }
         },
         "required": [
           "email"
-        ],
-        "additionalProperties": false
+        ]
       },
       "ResetPasswordInput": {
         "$id": "#/components/schemas/ResetPasswordInput",
@@ -1609,8 +1884,7 @@
         "required": [
           "token",
           "password"
-        ],
-        "additionalProperties": false
+        ]
       },
       "UpdateProfileInput": {
         "$id": "#/components/schemas/UpdateProfileInput",
@@ -1626,8 +1900,7 @@
             "pattern": "^[\\p{L}\\p{N}_.-]{3,30}$"
           },
           "phone": {
-            "type": "string",
-            "pattern": "^\\+237[26]\\d{8}$"
+            "type": "string"
           },
           "locale": {
             "type": "string",
@@ -1636,8 +1909,7 @@
               "en"
             ]
           }
-        },
-        "additionalProperties": false
+        }
       },
       "ChangeEmailInput": {
         "$id": "#/components/schemas/ChangeEmailInput",
@@ -1645,8 +1917,7 @@
         "properties": {
           "newEmail": {
             "type": "string",
-            "format": "email",
-            "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+            "maxLength": 254
           },
           "password": {
             "type": "string",
@@ -1657,8 +1928,7 @@
         "required": [
           "newEmail",
           "password"
-        ],
-        "additionalProperties": false
+        ]
       },
       "ChangeEmailResult": {
         "$id": "#/components/schemas/ChangeEmailResult",
@@ -1670,8 +1940,7 @@
         },
         "required": [
           "newEmail"
-        ],
-        "additionalProperties": false
+        ]
       },
       "ConfirmEmailChangeInput": {
         "$id": "#/components/schemas/ConfirmEmailChangeInput",
@@ -1684,8 +1953,7 @@
         },
         "required": [
           "code"
-        ],
-        "additionalProperties": false
+        ]
       },
       "GoogleSignupDraft": {
         "$id": "#/components/schemas/GoogleSignupDraft",
@@ -1701,8 +1969,7 @@
         "required": [
           "email",
           "fullName"
-        ],
-        "additionalProperties": false
+        ]
       },
       "CompleteGoogleSignupInput": {
         "$id": "#/components/schemas/CompleteGoogleSignupInput",
@@ -1718,8 +1985,7 @@
             "pattern": "^[\\p{L}\\p{N}_.-]{3,30}$"
           },
           "phone": {
-            "type": "string",
-            "pattern": "^\\+237[26]\\d{8}$"
+            "type": "string"
           },
           "locale": {
             "type": "string",
@@ -1741,8 +2007,225 @@
           "phone",
           "locale",
           "acceptPrivacy"
-        ],
-        "additionalProperties": false
+        ]
+      },
+      "CategoryView": {
+        "$id": "#/components/schemas/CategoryView",
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "nameFr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "nameFr",
+          "nameEn"
+        ]
+      },
+      "CategoryList": {
+        "$id": "#/components/schemas/CategoryList",
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryView"
+            }
+          }
+        },
+        "required": [
+          "categories"
+        ]
+      },
+      "CreateCategoryInput": {
+        "$id": "#/components/schemas/CreateCategoryInput",
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 40,
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "nameFr": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 60
+          },
+          "nameEn": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 60
+          },
+          "sort": {
+            "default": 0,
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "key",
+          "nameFr",
+          "nameEn"
+        ]
+      },
+      "UpdateCategoryInput": {
+        "$id": "#/components/schemas/UpdateCategoryInput",
+        "type": "object",
+        "properties": {
+          "nameFr": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 60
+          },
+          "nameEn": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 60
+          },
+          "sort": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "CatalogueGroup": {
+        "$id": "#/components/schemas/CatalogueGroup",
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "memberCount": {
+            "type": "number"
+          },
+          "languageLabel": {
+            "nullable": true,
+            "type": "string"
+          },
+          "categoryKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "full": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "description",
+          "memberCount",
+          "languageLabel",
+          "categoryKeys",
+          "tags",
+          "full"
+        ]
+      },
+      "CataloguePage": {
+        "$id": "#/components/schemas/CataloguePage",
+        "type": "object",
+        "properties": {
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogueGroup"
+            }
+          },
+          "nextCursor": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "groups",
+          "nextCursor"
+        ]
+      },
+      "CatalogueGroupDetail": {
+        "$id": "#/components/schemas/CatalogueGroupDetail",
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "memberCount": {
+            "type": "number"
+          },
+          "languageLabel": {
+            "nullable": true,
+            "type": "string"
+          },
+          "categoryKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "full": {
+            "type": "boolean"
+          },
+          "viewer": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "none",
+              "member",
+              "pending",
+              "banned"
+            ]
+          },
+          "groupId": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "description",
+          "memberCount",
+          "languageLabel",
+          "categoryKeys",
+          "tags",
+          "full",
+          "viewer",
+          "groupId"
+        ]
       },
       "CreateGroupInput": {
         "$id": "#/components/schemas/CreateGroupInput",
@@ -1764,10 +2247,8 @@
           }
         },
         "required": [
-          "name",
-          "description"
-        ],
-        "additionalProperties": false
+          "name"
+        ]
       },
       "UpdateGroupInput": {
         "$id": "#/components/schemas/UpdateGroupInput",
@@ -1805,9 +2286,25 @@
           "languageLabel": {
             "type": "string",
             "maxLength": 40
+          },
+          "categoryKeys": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 30,
+              "pattern": "^[\\p{L}\\p{N}][\\p{L}\\p{N} ._+#-]*$"
+            }
           }
-        },
-        "additionalProperties": false
+        }
       },
       "DeleteGroupInput": {
         "$id": "#/components/schemas/DeleteGroupInput",
@@ -1819,8 +2316,7 @@
         },
         "required": [
           "confirmName"
-        ],
-        "additionalProperties": false
+        ]
       },
       "GroupView": {
         "$id": "#/components/schemas/GroupView",
@@ -1876,6 +2372,18 @@
             "nullable": true,
             "type": "number"
           },
+          "categoryKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "myRole": {
             "type": "string",
             "enum": [
@@ -1899,8 +2407,7 @@
             "required": [
               "usedBytes",
               "quotaBytes"
-            ],
-            "additionalProperties": false
+            ]
           },
           "createdAt": {
             "type": "string"
@@ -1919,11 +2426,12 @@
           "status",
           "memberCount",
           "memberCap",
+          "categoryKeys",
+          "tags",
           "myRole",
           "storage",
           "createdAt"
-        ],
-        "additionalProperties": false
+        ]
       },
       "MyGroup": {
         "$id": "#/components/schemas/MyGroup",
@@ -1960,8 +2468,7 @@
           "status",
           "myRole",
           "memberCount"
-        ],
-        "additionalProperties": false
+        ]
       },
       "MyGroups": {
         "$id": "#/components/schemas/MyGroups",
@@ -1976,8 +2483,7 @@
         },
         "required": [
           "groups"
-        ],
-        "additionalProperties": false
+        ]
       },
       "InviteLinkView": {
         "$id": "#/components/schemas/InviteLinkView",
@@ -1993,8 +2499,7 @@
         "required": [
           "token",
           "createdAt"
-        ],
-        "additionalProperties": false
+        ]
       },
       "InvitePreview": {
         "$id": "#/components/schemas/InvitePreview",
@@ -2038,8 +2543,7 @@
           "full",
           "viewer",
           "groupId"
-        ],
-        "additionalProperties": false
+        ]
       },
       "JoinResult": {
         "$id": "#/components/schemas/JoinResult",
@@ -2059,8 +2563,7 @@
         "required": [
           "status",
           "groupId"
-        ],
-        "additionalProperties": false
+        ]
       },
       "JoinRequestView": {
         "$id": "#/components/schemas/JoinRequestView",
@@ -2101,8 +2604,7 @@
               "fullName",
               "email",
               "phone"
-            ],
-            "additionalProperties": false
+            ]
           }
         },
         "required": [
@@ -2110,8 +2612,7 @@
           "source",
           "createdAt",
           "user"
-        ],
-        "additionalProperties": false
+        ]
       },
       "JoinRequestList": {
         "$id": "#/components/schemas/JoinRequestList",
@@ -2126,8 +2627,7 @@
         },
         "required": [
           "requests"
-        ],
-        "additionalProperties": false
+        ]
       },
       "DecideJoinRequestInput": {
         "$id": "#/components/schemas/DecideJoinRequestInput",
@@ -2143,8 +2643,7 @@
         },
         "required": [
           "decision"
-        ],
-        "additionalProperties": false
+        ]
       },
       "MemberView": {
         "$id": "#/components/schemas/MemberView",
@@ -2187,8 +2686,7 @@
               "email",
               "phone",
               "joinedAt"
-            ],
-            "additionalProperties": false
+            ]
           }
         },
         "required": [
@@ -2196,8 +2694,7 @@
           "pseudo",
           "role",
           "contact"
-        ],
-        "additionalProperties": false
+        ]
       },
       "MemberList": {
         "$id": "#/components/schemas/MemberList",
@@ -2212,8 +2709,7 @@
         },
         "required": [
           "members"
-        ],
-        "additionalProperties": false
+        ]
       },
       "ChangeRoleInput": {
         "$id": "#/components/schemas/ChangeRoleInput",
@@ -2229,8 +2725,7 @@
         },
         "required": [
           "role"
-        ],
-        "additionalProperties": false
+        ]
       },
       "TransferLeadershipInput": {
         "$id": "#/components/schemas/TransferLeadershipInput",
@@ -2242,8 +2737,7 @@
         },
         "required": [
           "userId"
-        ],
-        "additionalProperties": false
+        ]
       },
       "RemoveMemberInput": {
         "$id": "#/components/schemas/RemoveMemberInput",
@@ -2253,11 +2747,7 @@
             "default": false,
             "type": "boolean"
           }
-        },
-        "required": [
-          "ban"
-        ],
-        "additionalProperties": false
+        }
       },
       "HealthStatus": {
         "$id": "#/components/schemas/HealthStatus",
@@ -2272,8 +2762,7 @@
         },
         "required": [
           "status"
-        ],
-        "additionalProperties": false
+        ]
       }
     }
   }

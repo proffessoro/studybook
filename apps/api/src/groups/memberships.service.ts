@@ -1,7 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { ErrorCode } from '@studybook/shared';
 import { ApiError } from '../common/api-error.js';
-import type { Prisma, User } from '../generated/prisma/client.js';
+import { Prisma, type User } from '../generated/prisma/client.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 import { canAccessGroup } from './group-access.guard.js';
 
 /**
@@ -10,6 +11,8 @@ import { canAccessGroup } from './group-access.guard.js';
  */
 @Injectable()
 export class MembershipsService {
+  constructor(private readonly prisma: PrismaService) {}
+
   /**
    * Makes `user` an active member. Already a member: nothing to do. Checks, with
    * the group row locked so concurrent joins see each other: the group is active,
@@ -41,8 +44,45 @@ export class MembershipsService {
     if (existing) await tx.membership.update({ where: { id: existing.id }, data: fresh });
     else await tx.membership.create({ data: { groupId, userId: user.id, ...fresh } });
   }
+
+  /**
+   * Asks the leader to let `user` in (MEM-04). Already a member: nothing to do.
+   * Banned: refused. Already waiting: the same request stays (one pending per person).
+   */
+  async requestToJoin(group: { id: string; status: string }, user: User, source: 'invite' | 'catalogue'): Promise<'joined' | 'requested'> {
+    const membership = await this.prisma.membership.findUnique({
+      where: { groupId_userId: { groupId: group.id, userId: user.id } },
+    });
+    if (membership?.status === 'banned') throw bannedError();
+    if (canAccessGroup(membership)) return 'joined';
+    if (group.status === 'archived') {
+      throw new ApiError(HttpStatus.CONFLICT, ErrorCode.GROUP_ARCHIVED, 'This group is archived (read-only)');
+    }
+    try {
+      await this.prisma.joinRequest.create({ data: { groupId: group.id, userId: user.id, source } });
+    } catch (error) {
+      // Already waiting: the partial unique index allows one pending request per person.
+      if (!(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')) throw error;
+    }
+    return 'requested';
+  }
+
+  /** null when logged out. */
+  async viewerState(groupId: string, viewer: User | null): Promise<ViewerState | null> {
+    if (!viewer) return null;
+    const [membership, pending] = await Promise.all([
+      this.prisma.membership.findUnique({ where: { groupId_userId: { groupId, userId: viewer.id } } }),
+      this.prisma.joinRequest.findFirst({ where: { groupId, userId: viewer.id, status: 'pending' } }),
+    ]);
+    if (membership?.status === 'banned') return 'banned';
+    if (canAccessGroup(membership)) return 'member';
+    return pending ? 'pending' : 'none';
+  }
 }
 
+
+/** Where someone stands with a group, for the invite and catalogue pages. */
+export type ViewerState = 'none' | 'member' | 'pending' | 'banned';
 export function bannedError() {
   return new ApiError(HttpStatus.FORBIDDEN, ErrorCode.BANNED_FROM_GROUP, 'You were banned from this group');
 }

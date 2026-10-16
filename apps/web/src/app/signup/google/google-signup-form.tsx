@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import type { GoogleSignupDraft, Locale } from '@studybook/shared';
 import { describedBy, FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
+import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { type FieldErrors, fieldErrorsOf, useApiErrorMessages } from '@/lib/api-errors';
@@ -87,7 +88,7 @@ export function GoogleSignupForm({ next }: { next: string }) {
   const err = (field: string) => messages.field(field, fieldErrors[field]);
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+    <form method="post" onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
       <p className="rounded-md bg-muted px-3 py-2 text-sm">
         {t('connectedAs')} <strong className="break-all">{draft.email}</strong>
       </p>
@@ -164,9 +165,9 @@ export function GoogleSignupForm({ next }: { next: string }) {
         </p>
       )}
 
-      <Button type="submit" size="lg" disabled={pending}>
+      <SubmitButton size="lg" pending={pending}>
         {pending ? tSignUp('submitting') : tSignUp('submit')}
-      </Button>
+      </SubmitButton>
     </form>
   );
 }

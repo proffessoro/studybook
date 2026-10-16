@@ -152,6 +152,8 @@ describe('groups (GRP-01, GRP-02, GRP-05)', () => {
 
       const res = await leader.patch(`/groups/${id}`, {
         visibility: 'listed',
+        categoryKeys: ['tech', 'languages'],
+        tags: ['Python', ' BEPC ', 'python'],
         inviteRequiresApproval: true,
         progressVisibility: 'all',
         feedEnabled: false,
@@ -166,7 +168,31 @@ describe('groups (GRP-01, GRP-02, GRP-05)', () => {
         progressVisibility: 'all',
         feedEnabled: false,
         languageLabel: null,
+        categoryKeys: ['languages', 'tech'],
+        tags: ['bepc', 'python'],
       });
+    });
+
+    it('needs a category before the group can be listed (GRP-04)', async () => {
+      const { id } = await createGroup();
+
+      const res = await leader.patch(`/groups/${id}`, { visibility: 'listed' });
+      expect(res.body.details.fields).toEqual({ categoryKeys: ['required_when_listed'] });
+      expect((await leader.get(`/groups/${id}`)).body.visibility).toBe('private');
+
+      await leader.patch(`/groups/${id}`, { visibility: 'listed', categoryKeys: ['tech'] });
+      const emptied = await leader.patch(`/groups/${id}`, { categoryKeys: [] });
+      expect(emptied.body.details.fields).toEqual({ categoryKeys: ['required_when_listed'] });
+    });
+
+    it('refuses unknown categories and bad tags', async () => {
+      const { id } = await createGroup();
+      expect((await leader.patch(`/groups/${id}`, { categoryKeys: ['astrology'] })).body.details.fields).toEqual({
+        categoryKeys: ['unknown'],
+      });
+      expect((await leader.patch(`/groups/${id}`, { tags: ['x'] })).body.details.fields).toEqual({ 'tags.0': ['too_small'] });
+      const tooMany = await leader.patch(`/groups/${id}`, { tags: Array.from({ length: 11 }, (_, i) => `tag${i}`) });
+      expect(tooMany.body.details.fields).toEqual({ tags: ['too_big'] });
     });
 
     it('rejects unknown values', async () => {

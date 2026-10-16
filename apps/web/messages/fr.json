@@ -2,7 +2,8 @@
   "Home": {
     "title": "Studybook",
     "tagline": "Des communautés d'apprentissage où chacun passe à l'action.",
-    "cta": "Créer un groupe"
+    "cta": "Créer un groupe",
+    "browse": "Parcourir les groupes"
   },
   "Nav": {
     "label": "Navigation principale",
@@ -13,7 +14,8 @@
     "logout": "Se déconnecter",
     "account": "Compte de {pseudo}",
     "profile": "Mon profil",
-    "groups": "Mes groupes"
+    "groups": "Mes groupes",
+    "catalogue": "Catalogue"
   },
   "LanguageSwitcher": {
     "label": "Changer de langue",
@@ -98,6 +100,19 @@
       "name": {
         "too_small": "Utilisez au moins 3 caractères.",
         "too_big": "Utilisez au plus 80 caractères."
+      },
+      "categoryKeys": {
+        "required_when_listed": "Choisissez au moins un centre d'intérêt pour lister le groupe dans le catalogue.",
+        "too_big": "Choisissez au plus 5 centres d'intérêt.",
+        "unknown": "Ce centre d'intérêt n'existe plus. Rechargez la page."
+      },
+      "tags": {
+        "too_big": "Utilisez au plus 10 étiquettes."
+      },
+      "tag": {
+        "too_small": "Chaque étiquette a au moins 2 caractères.",
+        "too_big": "Chaque étiquette a au plus 30 caractères.",
+        "invalid_format": "Les étiquettes utilisent des lettres, des chiffres, des espaces et . _ + # -"
       }
     },
     "api": {
@@ -241,7 +256,11 @@
     "deleteHint": "Supprimer efface définitivement le groupe, son contenu et ses membres.",
     "deleteConfirm": "Pour supprimer, tapez le nom du groupe : {name}",
     "delete": "Supprimer définitivement le groupe",
-    "deleteMismatch": "Le nom ne correspond pas."
+    "deleteMismatch": "Le nom ne correspond pas.",
+    "categories": "Centres d'intérêt",
+    "categoriesHint": "Là où le groupe apparaît dans le catalogue. Nécessaire pour le lister.",
+    "tags": "Étiquettes",
+    "tagsHint": "Des mots que les gens pourraient chercher, séparés par des virgules (10 au plus)."
   },
   "Join": {
     "invitedTo": "Vous êtes invité à rejoindre",
@@ -303,5 +322,25 @@
     "leaveTitle": "Quitter le groupe",
     "leaveConfirm": "Vous ne verrez plus le groupe. Vos preuves passées restent visibles pour le responsable.",
     "leaveYes": "Quitter"
+  },
+  "Catalogue": {
+    "title": "Catalogue des groupes",
+    "intro": "Des groupes d’apprentissage ouverts aux nouveaux membres. Trouvez-en un par centre d’intérêt et demandez à rejoindre.",
+    "search": "Rechercher",
+    "searchPlaceholder": "Nom ou étiquette, par ex. python, bepc",
+    "categories": "Catégories",
+    "all": "Tout",
+    "memberCount": "{count, plural, one {# membre} other {# membres}}",
+    "empty": "Aucun groupe n'est encore listé ici.",
+    "noResults": "Aucun groupe ne correspond à « {q} ».",
+    "more": "Voir plus",
+    "loggedOut": "Créez un compte ou connectez-vous pour demander à rejoindre. Vous reviendrez ici ensuite.",
+    "signUp": "Créer un compte",
+    "logIn": "J'ai déjà un compte",
+    "request": "Demander à rejoindre",
+    "approvalNote": "Le responsable accepte ou refuse les demandes.",
+    "pending": "Votre demande est envoyée. Vous serez dans le groupe dès que le responsable l’acceptera.",
+    "full": "Ce groupe est complet.",
+    "banned": "Vous ne pouvez pas rejoindre ce groupe."
   }
 }

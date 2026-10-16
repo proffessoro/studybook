@@ -15,6 +15,9 @@ export default async function HomePage() {
       <Button size="lg" asChild>
         <Link href="/signup">{t('cta')}</Link>
       </Button>
+      <Button size="lg" variant="outline" asChild>
+        <Link href="/catalogue">{t('browse')}</Link>
+      </Button>
     </main>
   );
 }

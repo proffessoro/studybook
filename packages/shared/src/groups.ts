@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CategoryKeys, Tags } from './catalogue.js';
 import { GroupRole } from './roles.js';
 
 export const GroupRoleSchema = z.enum([GroupRole.LEADER, GroupRole.MODERATOR, GroupRole.MEMBER]);
@@ -32,6 +33,10 @@ export const UpdateGroupInput = z
     feedEnabled: z.boolean(),
     /** Empty to remove */
     languageLabel,
+    /** Interest categories (GRP-04). A listed group needs at least one */
+    categoryKeys: CategoryKeys,
+    /** Free tags, matched by catalogue search */
+    tags: Tags,
   })
   .partial()
   .meta({ id: 'UpdateGroupInput' });
@@ -57,6 +62,8 @@ export const GroupView = z
     memberCount: z.number(),
     /** null = no limit */
     memberCap: z.number().nullable(),
+    categoryKeys: z.array(z.string()),
+    tags: z.array(z.string()),
     myRole: GroupRoleSchema,
     /** Only for the leader (LIM-01): e.g. "620 MB of 1 GB". quotaBytes null = no limit */
     storage: z.object({ usedBytes: z.number(), quotaBytes: z.number().nullable() }).nullable(),

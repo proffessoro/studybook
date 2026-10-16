@@ -2,11 +2,10 @@ import { randomBytes } from 'node:crypto';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { ErrorCode, type InviteLinkView, type InvitePreview, type JoinRequestView, type JoinResult } from '@studybook/shared';
 import { ApiError } from '../common/api-error.js';
-import { type Group, Prisma, type User } from '../generated/prisma/client.js';
+import type { Group, User } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RateLimiter } from '../rate-limit/rate-limiter.js';
-import { canAccessGroup } from './group-access.guard.js';
-import { bannedError, MembershipsService } from './memberships.service.js';
+import { MembershipsService } from './memberships.service.js';
 
 function invalidInvite() {
   return new ApiError(HttpStatus.NOT_FOUND, ErrorCode.INVITE_INVALID, 'This invite link no longer works');
@@ -42,14 +41,7 @@ export class InvitesService {
     const group = link.group;
     const memberCount = await this.prisma.membership.count({ where: { groupId: group.id, status: 'active' } });
 
-    let state: InvitePreview['viewer'] = null;
-    if (viewer) {
-      const [membership, pending] = await Promise.all([
-        this.prisma.membership.findUnique({ where: { groupId_userId: { groupId: group.id, userId: viewer.id } } }),
-        this.prisma.joinRequest.findFirst({ where: { groupId: group.id, userId: viewer.id, status: 'pending' } }),
-      ]);
-      state = membership?.status === 'banned' ? 'banned' : canAccessGroup(membership) ? 'member' : pending ? 'pending' : 'none';
-    }
+    const state = await this.memberships.viewerState(group.id, viewer);
 
     return {
       groupName: group.name,
@@ -72,21 +64,8 @@ export class InvitesService {
       return { status: 'joined', groupId: group.id };
     }
 
-    const membership = await this.prisma.membership.findUnique({
-      where: { groupId_userId: { groupId: group.id, userId: user.id } },
-    });
-    if (membership?.status === 'banned') throw bannedError();
-    if (canAccessGroup(membership)) return { status: 'joined', groupId: group.id };
-    if (group.status === 'archived') {
-      throw new ApiError(HttpStatus.CONFLICT, ErrorCode.GROUP_ARCHIVED, 'This group is archived (read-only)');
-    }
-    try {
-      await this.prisma.joinRequest.create({ data: { groupId: group.id, userId: user.id, source: 'invite' } });
-    } catch (error) {
-      // Already waiting: the partial unique index allows one pending request per person.
-      if (!(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')) throw error;
-    }
-    return { status: 'requested', groupId: group.id };
+    const status = await this.memberships.requestToJoin(group, user, 'invite');
+    return { status, groupId: group.id };
   }
 
   /** MEM-04: pending requests, oldest first. */

@@ -2,7 +2,8 @@
   "Home": {
     "title": "Studybook",
     "tagline": "Learning communities where people actually follow through.",
-    "cta": "Create a group"
+    "cta": "Create a group",
+    "browse": "Browse groups"
   },
   "Nav": {
     "label": "Main navigation",
@@ -13,7 +14,8 @@
     "logout": "Log out",
     "account": "Account of {pseudo}",
     "profile": "My profile",
-    "groups": "My groups"
+    "groups": "My groups",
+    "catalogue": "Catalogue"
   },
   "LanguageSwitcher": {
     "label": "Change language",
@@ -98,6 +100,19 @@
       "name": {
         "too_small": "Use at least 3 characters.",
         "too_big": "Use at most 80 characters."
+      },
+      "categoryKeys": {
+        "required_when_listed": "Pick at least one category to list the group in the catalogue.",
+        "too_big": "Pick at most 5 categories.",
+        "unknown": "This category no longer exists. Reload the page."
+      },
+      "tags": {
+        "too_big": "Use at most 10 tags."
+      },
+      "tag": {
+        "too_small": "Each tag needs at least 2 characters.",
+        "too_big": "Each tag has at most 30 characters.",
+        "invalid_format": "Tags use letters, digits, spaces, and . _ + # -"
       }
     },
     "api": {
@@ -241,7 +256,11 @@
     "deleteHint": "Deleting removes the group, its content, and its members for good.",
     "deleteConfirm": "To delete, type the group name: {name}",
     "delete": "Delete the group for good",
-    "deleteMismatch": "The name does not match."
+    "deleteMismatch": "The name does not match.",
+    "categories": "Interest categories",
+    "categoriesHint": "Where the group appears in the catalogue. Needed to list it.",
+    "tags": "Tags",
+    "tagsHint": "Words people may search for, separated by commas (up to 10)."
   },
   "Join": {
     "invitedTo": "You're invited to join",
@@ -303,5 +322,25 @@
     "leaveTitle": "Leave the group",
     "leaveConfirm": "You will no longer see the group. Your past submissions stay visible to the leader.",
     "leaveYes": "Leave"
+  },
+  "Catalogue": {
+    "title": "Group catalogue",
+    "intro": "Learning groups open to new members. Find one by interest and ask to join.",
+    "search": "Search",
+    "searchPlaceholder": "Name or tag, e.g. python, bepc",
+    "categories": "Categories",
+    "all": "All",
+    "memberCount": "{count, plural, one {# member} other {# members}}",
+    "empty": "No group is listed here yet.",
+    "noResults": "No group matches \"{q}\".",
+    "more": "Show more",
+    "loggedOut": "Create an account or log in to ask to join. You will come back here after.",
+    "signUp": "Create an account",
+    "logIn": "I already have an account",
+    "request": "Ask to join",
+    "approvalNote": "The leader accepts or refuses requests.",
+    "pending": "Your request was sent. You will be in the group once the leader accepts it.",
+    "full": "This group is full.",
+    "banned": "You can't join this group."
   }
 }
