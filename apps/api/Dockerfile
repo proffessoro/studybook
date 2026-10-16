@@ -22,7 +22,9 @@ RUN pnpm install --frozen-lockfile --filter "@studybook/api..."
 COPY packages/config packages/config
 COPY packages/shared packages/shared
 COPY apps/api apps/api
-RUN pnpm --filter @studybook/shared build && pnpm --filter @studybook/api build
+# prisma.config.ts requires DATABASE_URL, but `prisma generate` never connects: a placeholder will do.
+RUN DATABASE_URL=postgresql://build:build@localhost:5432/build \
+    sh -c 'pnpm --filter @studybook/shared build && pnpm --filter @studybook/api build'
 
 # One-shot: applies pending migrations, then exits (design §7: migrations run on start).
 FROM builder AS migrate
