@@ -1594,6 +1594,175 @@
           "admin"
         ]
       }
+    },
+    "/api/v1/groups/{groupId}/uploads": {
+      "post": {
+        "operationId": "FilesController_request",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestUploadInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Quota reserved; send the bytes to uploadUrl",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadTicket"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "files"
+        ]
+      }
+    },
+    "/api/v1/uploads/{fileId}": {
+      "put": {
+        "operationId": "FilesController_receive",
+        "parameters": [
+          {
+            "name": "fileId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stored and checked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "files"
+        ]
+      }
+    },
+    "/api/v1/files/{fileId}": {
+      "get": {
+        "operationId": "FilesController_download",
+        "parameters": [
+          {
+            "name": "fileId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The file"
+          },
+          "206": {
+            "description": "Part of the file (Range request)"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "files"
+        ]
+      },
+      "delete": {
+        "operationId": "FilesController_delete",
+        "parameters": [
+          {
+            "name": "fileId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted; the bytes count no more against the quota"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "files"
+        ]
+      }
     }
   },
   "info": {
@@ -1638,6 +1807,10 @@
               "TASK_DEADLINE_PASSED",
               "TASK_NOT_APPLICABLE",
               "STORAGE_QUOTA_EXCEEDED",
+              "FILE_TOO_LARGE",
+              "FILE_TYPE_NOT_ALLOWED",
+              "UPLOAD_SIZE_MISMATCH",
+              "UPLOAD_EXPIRED",
               "INTERNAL_ERROR"
             ]
           },
@@ -2748,6 +2921,95 @@
             "type": "boolean"
           }
         }
+      },
+      "RequestUploadInput": {
+        "$id": "#/components/schemas/RequestUploadInput",
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "pdf",
+              "audio",
+              "video",
+              "image"
+            ]
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "filename": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "kind",
+          "sizeBytes",
+          "filename"
+        ]
+      },
+      "UploadTicket": {
+        "$id": "#/components/schemas/UploadTicket",
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "string"
+          },
+          "uploadUrl": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fileId",
+          "uploadUrl",
+          "expiresAt"
+        ]
+      },
+      "FileView": {
+        "$id": "#/components/schemas/FileView",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "pdf",
+              "audio",
+              "video",
+              "image"
+            ]
+          },
+          "mime": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "sizeBytes": {
+            "type": "number"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "mime",
+          "filename",
+          "sizeBytes",
+          "url"
+        ]
       },
       "HealthStatus": {
         "$id": "#/components/schemas/HealthStatus",

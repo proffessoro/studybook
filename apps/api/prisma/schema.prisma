@@ -75,6 +75,7 @@ model User {
   ownedGroups          Group[]
   memberships          Membership[]
   createdInvites       InviteLink[]
+  uploads              File[]
   joinRequests         JoinRequest[]
 
   @@map("users")
@@ -217,6 +218,7 @@ model Group {
   joinRequests           JoinRequest[]
   categories             GroupCategory[]
   tags                   GroupTag[]
+  files                  File[]
 
   @@index([ownerId])
   @@index([visibility, status])
@@ -345,4 +347,55 @@ model GroupTag {
   @@id([groupId, tag])
   @@index([tag])
   @@map("group_tags")
+}
+
+enum FileKind {
+  pdf
+  audio
+  video
+  image
+
+  @@map("file_kind")
+}
+
+enum FileStatus {
+  /// Quota reserved, bytes not received yet (expires if the upload never comes)
+  reserved
+  /// Bytes arriving now; only one upload may write a file
+  uploading
+  /// Stored and checked; may still be processed in the background (step 1.4d)
+  ready
+
+  @@map("file_status")
+}
+
+/// Design §4.3, §5.5. Every byte stored for a group is a row here, so quotas are exact.
+model File {
+  id               String     @id @default(uuid(7)) @db.Uuid
+  groupId          String     @map("group_id") @db.Uuid
+  group            Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  uploaderId       String     @map("uploader_id") @db.Uuid
+  uploader         User       @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  kind             FileKind
+  /// Detected from the bytes, not trusted from the client
+  mime             String
+  /// The name it was uploaded with, for downloads
+  filename         String
+  /// What counts against the group's quota
+  sizeBytes        BigInt     @map("size_bytes")
+  /// Where the storage driver keeps it, e.g. groups/<groupId>/<fileId>
+  storageKey       String     @unique @map("storage_key")
+  status           FileStatus @default(reserved)
+  /// A reservation nobody uploads to is released after this
+  reservedUntil    DateTime?  @map("reserved_until")
+  /// Background processing (step 1.4d): pending / ready / failed
+  processingStatus String     @default("ready") @map("processing_status")
+  /// Smaller renditions, e.g. { "480p": { "key": …, "sizeBytes": … } }
+  variants         Json       @default("{}")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  updatedAt        DateTime   @updatedAt @map("updated_at")
+
+  @@index([groupId])
+  @@index([status, reservedUntil])
+  @@map("files")
 }

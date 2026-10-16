@@ -10,3 +10,4 @@ coverage/
 apps/api/src/generated/
 playwright-report/
 test-results/
+/apps/api/storage/

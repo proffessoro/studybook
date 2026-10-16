@@ -1,3 +1,5 @@
+import os from 'node:os';
+import path from 'node:path';
 import swc from 'unplugin-swc';
 import { defineConfig } from 'vitest/config';
 
@@ -15,6 +17,7 @@ export default defineConfig({
       DATABASE_URL: process.env.TEST_DATABASE_URL ?? 'postgresql://studybook:studybook@localhost:5432/studybook_test',
       REDIS_URL: process.env.TEST_REDIS_URL ?? 'redis://localhost:6379/1',
       PUBLIC_URL: 'http://localhost:3000',
+      STORAGE_DIR: path.join(os.tmpdir(), 'studybook-test-storage'),
     },
   },
 });
