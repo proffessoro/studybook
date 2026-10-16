@@ -1,0 +1,146 @@
+# Production stack (design §7). Images are built by .github/workflows/release.yml
+# and pulled from GHCR; nothing is built on the server.
+#
+#   cp .env.example .env        # then fill it in
+#   docker compose pull && docker compose up -d
+#
+# Updates: `docker compose pull && docker compose up -d`. Migrations run on start.
+#
+# HTTPS: this file has no reverse proxy of its own. `web` and `api` listen on
+# 127.0.0.1 only, for a proxy already on the host (nginx, Caddy):
+#   https://<domain>/api/v1/*  ->  http://127.0.0.1:${API_PORT}
+#   https://<domain>/*         ->  http://127.0.0.1:${WEB_PORT}
+# Behind Traefik in Docker, add the override instead:
+#   docker compose -f docker-compose.yml -f docker-compose.traefik.yml up -d
+name: studybook
+
+x-api-env: &api-env
+  NODE_ENV: production
+  APP_VERSION: ${STUDYBOOK_TAG:-latest}
+  PUBLIC_URL: ${PUBLIC_URL:?set PUBLIC_URL in .env}
+  DATABASE_URL: postgresql://studybook:${POSTGRES_PASSWORD}@postgres:5432/studybook
+  REDIS_URL: redis://valkey:6379
+  SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in .env}
+  STORAGE_DIR: /data/storage
+  TRUST_PROXY: "true"
+  # The `worker` service runs background jobs, so the API doesn't.
+  WORKER_IN_PROCESS: "false"
+  INSTANCE_NAME: ${INSTANCE_NAME:-Studybook}
+  SMTP_HOST: ${SMTP_HOST:?set SMTP_HOST in .env}
+  SMTP_PORT: ${SMTP_PORT:-587}
+  SMTP_SECURE: ${SMTP_SECURE:-false}
+  SMTP_USER: ${SMTP_USER:-}
+  SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+  SMTP_FROM: ${SMTP_FROM:?set SMTP_FROM in .env}
+  GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+  GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+
+services:
+  web:
+    image: ${IMAGE_PREFIX:-ghcr.io/proffessoro/studybook}-web:${STUDYBOOK_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      # Server-side renders call the API over the internal network.
+      API_URL: http://api:4000
+    ports:
+      - 127.0.0.1:${WEB_PORT:-3100}:3000
+    depends_on:
+      api:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  api:
+    image: ${IMAGE_PREFIX:-ghcr.io/proffessoro/studybook}-api:${STUDYBOOK_TAG:-latest}
+    restart: unless-stopped
+    environment: *api-env
+    volumes:
+      - storage:/data/storage
+    ports:
+      - 127.0.0.1:${API_PORT:-4100}:4000
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      valkey:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # Same image as the API: media compression (ffmpeg), email, cleanup (design §5.5).
+  worker:
+    image: ${IMAGE_PREFIX:-ghcr.io/proffessoro/studybook}-api:${STUDYBOOK_TAG:-latest}
+    restart: unless-stopped
+    command: ["node", "dist/worker.js"]
+    environment: *api-env
+    volumes:
+      - storage:/data/storage
+    # The image's healthcheck probes the API's HTTP port, which the worker doesn't open.
+    healthcheck:
+      disable: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      valkey:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          # Caps ffmpeg so a large video can't starve other services on the host.
+          memory: 1G
+          cpus: "1.5"
+
+  # One-shot: applies pending migrations, then exits. `api` and `worker` wait for it.
+  migrate:
+    image: ${IMAGE_PREFIX:-ghcr.io/proffessoro/studybook}-migrate:${STUDYBOOK_TAG:-latest}
+    restart: "no"
+    environment:
+      DATABASE_URL: postgresql://studybook:${POSTGRES_PASSWORD}@postgres:5432/studybook
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: studybook
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: studybook
+    volumes:
+      # postgres:18 images keep data under /var/lib/postgresql/<major>/docker
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U studybook"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+
+  valkey:
+    image: valkey/valkey:9.1-alpine
+    restart: unless-stopped
+    # Append-only file, so queued jobs survive a restart.
+    command: ["valkey-server", "--appendonly", "yes"]
+    volumes:
+      - valkey-data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+volumes:
+  postgres-data:
+  valkey-data:
+  storage:
