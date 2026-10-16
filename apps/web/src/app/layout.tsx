@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale } from 'next-intl/server';
+import { SiteHeader } from '@/components/site-header';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -18,8 +19,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
   return (
     <html lang={locale}>
-      <body className="min-h-dvh bg-white text-neutral-900 antialiased">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      <body className="min-h-dvh antialiased">
+        <NextIntlClientProvider>
+          <SiteHeader />
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );
