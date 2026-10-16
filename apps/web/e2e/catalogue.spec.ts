@@ -5,6 +5,8 @@ test.describe('catalogue', () => {
   test.use({ locale: 'fr-FR' });
 
   test('a visitor finds a listed group, logs in, asks to join, and gets in', async ({ page, browser, request }) => {
+    // A long journey across two browsers; on a cold dev server each first visit compiles a page.
+    test.slow();
     const [leader, visitor] = [await createUser(request), await createUser(request)];
     const name = `Révisions ${uniqueUser().pseudo}`;
     const tag = `bepc${Date.now() % 100000}`;

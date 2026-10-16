@@ -14,6 +14,10 @@
   "dependencies": {
     "@studybook/api-client": "workspace:*",
     "@studybook/shared": "workspace:*",
+    "@tiptap/extension-image": "3.31.4",
+    "@tiptap/pm": "3.31.4",
+    "@tiptap/react": "3.31.4",
+    "@tiptap/starter-kit": "3.31.4",
     "class-variance-authority": "0.7.1",
     "cn": "0.4.0",
     "lucide-react": "1.55.0",

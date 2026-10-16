@@ -1,18 +1,8 @@
 'use client';
 
-import { type ComponentProps, useSyncExternalStore } from 'react';
+import type { ComponentProps } from 'react';
 import { Button } from '@/components/ui/button';
-
-const noop = () => () => {};
-
-/** false while the server-rendered page waits for its JavaScript, true once it runs. */
-function useHydrated(): boolean {
-  return useSyncExternalStore(
-    noop,
-    () => true,
-    () => false,
-  );
-}
+import { useHydrated } from '@/lib/use-hydrated';
 
 /**
  * The submit button of a form handled in JavaScript. On a slow phone the page

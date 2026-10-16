@@ -1,0 +1,42 @@
+# Override for hosts where Traefik already runs in Docker (e.g. Hostinger's n8n template).
+#   docker compose -f docker-compose.yml -f docker-compose.traefik.yml up -d
+#
+# Find the values for .env:
+#   TRAEFIK_NETWORK       `docker inspect <traefik container> -f '{{json .NetworkSettings.Networks}}'`
+#   TRAEFIK_ENTRYPOINT    the HTTPS entrypoint in Traefik's command (`--entrypoints.<name>.address=:443`)
+#   TRAEFIK_CERTRESOLVER  the resolver in Traefik's command (`--certificatesresolvers.<name>.acme...`)
+
+x-traefik-network: &traefik-network
+  networks:
+    - default
+    - traefik
+
+services:
+  web:
+    <<: *traefik-network
+    ports: !reset []
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${TRAEFIK_NETWORK:?set TRAEFIK_NETWORK in .env}
+      traefik.http.routers.studybook-web.rule: Host(`${DOMAIN:?set DOMAIN in .env}`)
+      traefik.http.routers.studybook-web.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.studybook-web.tls.certresolver: ${TRAEFIK_CERTRESOLVER:-mytlschallenge}
+      traefik.http.services.studybook-web.loadbalancer.server.port: "3000"
+
+  api:
+    <<: *traefik-network
+    ports: !reset []
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${TRAEFIK_NETWORK}
+      traefik.http.routers.studybook-api.rule: Host(`${DOMAIN}`) && PathPrefix(`/api/v1`)
+      # Higher than the web router, so /api/v1 never falls through to Next.js.
+      traefik.http.routers.studybook-api.priority: "100"
+      traefik.http.routers.studybook-api.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.studybook-api.tls.certresolver: ${TRAEFIK_CERTRESOLVER:-mytlschallenge}
+      traefik.http.services.studybook-api.loadbalancer.server.port: "4000"
+
+networks:
+  traefik:
+    name: ${TRAEFIK_NETWORK}
+    external: true

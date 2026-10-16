@@ -1,3 +1,4 @@
+import type React from 'react';
 import type { ReactNode } from 'react';
 import { Label } from '@/components/ui/label';
 
@@ -39,4 +40,29 @@ export function describedBy(id: string, { hint, error }: { hint?: string; error?
     'aria-invalid': error ? true : undefined,
     'aria-describedby': error ? `${id}-error` : hint ? `${id}-hint` : undefined,
   } as const;
+}
+
+/**
+ * A checkbox or radio whose accessible name is just its label; the hint is
+ * linked as a description, so screen readers (and tests) get a short, exact name.
+ */
+export function CheckField({
+  id,
+  label,
+  hint,
+  ...input
+}: { id: string; label: string; hint?: string } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'id'>) {
+  return (
+    <div className="flex items-start gap-3">
+      <input id={id} aria-describedby={hint ? `${id}-hint` : undefined} className="mt-1 size-4 shrink-0" {...input} />
+      <div className="flex flex-col">
+        <label htmlFor={id}>{label}</label>
+        {hint && (
+          <span id={`${id}-hint`} className="text-sm text-muted-foreground">
+            {hint}
+          </span>
+        )}
+      </div>
+    </div>
+  );
 }

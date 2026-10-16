@@ -13,6 +13,8 @@ export default getRequestConfig(async () => {
 
   return {
     locale,
+    // Times are shown in West Africa Time (design §4.4), wherever the server runs.
+    timeZone: 'Africa/Douala',
     messages: (await import(`../../messages/${locale}.json`)).default,
   };
 });

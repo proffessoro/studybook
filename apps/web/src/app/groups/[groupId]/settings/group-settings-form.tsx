@@ -4,7 +4,7 @@ import { type FormEvent, type ReactNode, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { GroupView } from '@studybook/shared';
-import { describedBy, FormField } from '@/components/form-field';
+import { CheckField, describedBy, FormField } from '@/components/form-field';
 import { SubmitButton } from '@/components/submit-button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -147,25 +147,9 @@ function Choice({ legend, children }: { legend: string; children: ReactNode }) {
 }
 
 function Radio({ name, value, checked, label, hint }: { name: string; value: string; checked: boolean; label: string; hint?: string }) {
-  return (
-    <label className="flex items-start gap-3">
-      <input type="radio" name={name} value={value} defaultChecked={checked} className="mt-1 size-4 shrink-0" />
-      <span className="flex flex-col">
-        <span>{label}</span>
-        {hint && <span className="text-sm text-muted-foreground">{hint}</span>}
-      </span>
-    </label>
-  );
+  return <CheckField id={`${name}-${value}`} type="radio" name={name} value={value} defaultChecked={checked} label={label} hint={hint} />;
 }
 
 function Toggle({ name, checked, label, hint }: { name: string; checked: boolean; label: string; hint: string }) {
-  return (
-    <label className="flex items-start gap-3">
-      <input type="checkbox" name={name} defaultChecked={checked} className="mt-1 size-4 shrink-0" />
-      <span className="flex flex-col">
-        <span>{label}</span>
-        <span className="text-sm text-muted-foreground">{hint}</span>
-      </span>
-    </label>
-  );
+  return <CheckField id={name} type="checkbox" name={name} defaultChecked={checked} label={label} hint={hint} />;
 }

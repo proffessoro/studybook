@@ -1,3 +1,5 @@
+import { createRequire } from 'node:module';
+
 /**
  * Environment settings (design §7, OPS-02). Read once at start; development
  * defaults match deploy/docker-compose.dev.yml.
@@ -39,6 +41,18 @@ export const env = {
   /** Where uploaded files live with the local driver (design §2: `local` by default, S3 later). */
   get storageDir() {
     return process.env.STORAGE_DIR ?? 'storage';
+  },
+  /**
+   * The ffmpeg used for audio and video (design §5.5). The worker image has
+   * Alpine's; in development and tests the `ffmpeg-static` dev dependency is used.
+   */
+  get ffmpegPath(): string {
+    if (process.env.FFMPEG_PATH) return process.env.FFMPEG_PATH;
+    try {
+      return createRequire(import.meta.url)('ffmpeg-static') as string;
+    } catch {
+      return 'ffmpeg';
+    }
   },
   smtp: {
     host: process.env.SMTP_HOST ?? 'localhost',

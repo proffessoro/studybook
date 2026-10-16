@@ -1,0 +1,20 @@
+# Docker builds use the repository root as context; send only what the builds need.
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/coverage
+**/*.tsbuildinfo
+**/.env
+**/.env.*
+!**/.env.example
+.git
+apps/api/src/generated
+apps/api/storage
+apps/web/e2e
+apps/web/playwright-report
+apps/web/test-results
+deploy
+docs
+*.md
+!apps/**/README.md

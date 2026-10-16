@@ -10,10 +10,14 @@ allowBuilds:
   # Loads (or builds) the native argon2 binding used for password hashing.
   argon2: true
   '@prisma/engines': true
+  # Dev and tests only: downloads a pinned ffmpeg binary (production uses Alpine's ffmpeg, FFMPEG_PATH).
+  ffmpeg-static: true
   # Optional native speed-up for BullMQ's msgpackr; the JS fallback is fine.
   msgpackr-extract: false
   '@swc/core': true
   prisma: true
+  # Image processing; its native binary already comes as an optional dependency.
+  sharp: false
   # Only picks a native binary, which already comes as an optional dependency.
   unrs-resolver: false
 
