@@ -6,6 +6,8 @@ import {
   type LoginInput,
   type Me,
   PRIVACY_POLICY_VERSION,
+  type RecoverInput,
+  type ResetPasswordInput,
   type ResendVerificationInput,
   type SignUpInput,
   type ValidationDetails,
@@ -32,6 +34,14 @@ function loginLimits(email: string, ip: string): Limit[] {
   return [
     { key: `login-fail:acct:${email}:${ip}`, max: 5, windowSeconds: 900 },
     { key: `login-fail:ip:${ip}`, max: 20, windowSeconds: 900 },
+  ];
+}
+
+/** Reset emails: same budget as verification emails, counted separately. */
+function recoverLimits(email: string, ip: string): Limit[] {
+  return [
+    { key: `recover-email:addr:${email}`, max: 3, windowSeconds: 3600 },
+    { key: `recover-email:ip:${ip}`, max: 10, windowSeconds: 24 * 3600 },
   ];
 }
 
@@ -88,6 +98,39 @@ export class AuthService {
 
   async logout(token: string | undefined): Promise<void> {
     if (token) await this.sessions.revoke(token);
+  }
+
+  /**
+   * ACC-05: emails a reset link to an active account. Answers the same whether
+   * or not the address has one, so it can't be used to find accounts.
+   */
+  async requestPasswordReset(input: z.output<typeof RecoverInput>, ip: string): Promise<void> {
+    await this.rateLimiter.consume(...recoverLimits(input.email, ip));
+    const user = await this.prisma.user.findUnique({ where: { email: input.email } });
+    if (!user || user.status !== 'active') return;
+
+    const token = await this.codes.issueLinkToken(user.id, 'recover', user.email);
+    await this.outbox.send({
+      to: user.email,
+      locale: user.locale,
+      template: 'reset-password',
+      data: { pseudo: user.pseudo, link: `${env.publicUrl}/reset-password?${new URLSearchParams({ token })}` },
+    });
+  }
+
+  /** ACC-05: sets the new password and logs the user out everywhere, in case someone else had access. */
+  async resetPassword(input: z.output<typeof ResetPasswordInput>, ip: string): Promise<void> {
+    await this.rateLimiter.consume({ key: `reset-confirm:ip:${ip}`, max: 30, windowSeconds: 3600 });
+    const passwordHash = await hash(input.password);
+
+    await this.prisma.$transaction(async (tx) => {
+      const userId = await this.codes.consumeLinkToken('recover', input.token, tx);
+      if (!userId) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, ErrorCode.RESET_LINK_INVALID, 'Reset link expired or already used');
+      }
+      await tx.user.update({ where: { id: userId }, data: { passwordHash } });
+      await tx.session.deleteMany({ where: { userId } });
+    });
   }
 
   /** ACC-01: creates a pending user and emails a verification code. */

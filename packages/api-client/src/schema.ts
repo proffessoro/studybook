@@ -116,6 +116,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/recover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_recover"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/recover/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthController_resetPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -138,7 +170,7 @@ export interface components {
     schemas: {
         ApiError: {
             /** @enum {string} */
-            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "INVALID_CREDENTIALS" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_SUSPENDED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "GROUP_FULL" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
+            code: "VALIDATION_FAILED" | "BAD_REQUEST" | "UNAUTHENTICATED" | "INVALID_CREDENTIALS" | "EMAIL_NOT_VERIFIED" | "ACCOUNT_SUSPENDED" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED" | "VERIFICATION_CODE_INVALID" | "VERIFICATION_CODE_EXPIRED" | "RESET_LINK_INVALID" | "GROUP_FULL" | "TASK_DEADLINE_PASSED" | "TASK_NOT_APPLICABLE" | "STORAGE_QUOTA_EXCEEDED" | "INTERNAL_ERROR";
             message: string;
             details?: {
                 [key: string]: unknown;
@@ -194,6 +226,14 @@ export interface components {
             /** @enum {string} */
             locale: "fr" | "en";
             isInstanceAdmin: boolean;
+        };
+        RecoverInput: {
+            /** Format: email */
+            email: string;
+        };
+        ResetPasswordInput: {
+            token: string;
+            password: string;
         };
         HealthStatus: {
             /** @enum {string} */
@@ -406,6 +446,68 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Session ended (also fine without one) */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    AuthController_recover: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecoverInput"];
+            };
+        };
+        responses: {
+            /** @description A reset link was emailed if the address has an active account */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
+    AuthController_resetPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResetPasswordInput"];
+            };
+        };
+        responses: {
+            /** @description Password changed; every session was ended */
             204: {
                 headers: {
                     [name: string]: unknown;

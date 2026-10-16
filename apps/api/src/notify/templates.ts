@@ -7,7 +7,9 @@ function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }
 
-const verifyEmail: Record<Locale, (d: EmailJob['data']) => RenderedEmail> = {
+type DataOf<T extends EmailJob['template']> = Extract<EmailJob, { template: T }>['data'];
+
+const verifyEmail: Record<Locale, (d: DataOf<'verify-email'>) => RenderedEmail> = {
   fr: ({ pseudo, code, link }) => ({
     subject: `${code} est votre code Studybook`,
     text: `Bonjour ${pseudo},\n\nVotre code de vérification : ${code}\n\nOu ouvrez ce lien : ${link}\n\nLe code expire dans 30 minutes. Si vous n'avez pas créé de compte, ignorez cet email.`,
@@ -24,6 +26,35 @@ const verifyEmail: Record<Locale, (d: EmailJob['data']) => RenderedEmail> = {
   }),
 };
 
+const resetPassword: Record<Locale, (d: DataOf<'reset-password'>) => RenderedEmail> = {
+  fr: ({ pseudo, link }) => ({
+    subject: 'Réinitialiser votre mot de passe Studybook',
+    text: `Bonjour ${pseudo},
+
+Pour choisir un nouveau mot de passe, ouvrez ce lien : ${link}
+
+Le lien expire dans 1 heure et ne sert qu'une fois. Si vous n'avez rien demandé, ignorez cet email : votre mot de passe ne change pas.`,
+    html: layout(
+      `<p>Bonjour ${escapeHtml(pseudo)},</p><p>Pour choisir un nouveau mot de passe :</p>${linkButton(link, 'Choisir un nouveau mot de passe')}<p style="color:#666">Le lien expire dans 1 heure et ne sert qu'une fois. Si vous n'avez rien demandé, ignorez cet email : votre mot de passe ne change pas.</p>`,
+    ),
+  }),
+  en: ({ pseudo, link }) => ({
+    subject: 'Reset your Studybook password',
+    text: `Hello ${pseudo},
+
+To choose a new password, open this link: ${link}
+
+The link expires in 1 hour and works once. If you didn't ask for this, ignore this email: your password stays the same.`,
+    html: layout(
+      `<p>Hello ${escapeHtml(pseudo)},</p><p>To choose a new password:</p>${linkButton(link, 'Choose a new password')}<p style="color:#666">The link expires in 1 hour and works once. If you didn't ask for this, ignore this email: your password stays the same.</p>`,
+    ),
+  }),
+};
+
+function linkButton(link: string, label: string): string {
+  return `<p><a href="${escapeHtml(link)}" style="display:inline-block;background:#111;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">${escapeHtml(label)}</a></p>`;
+}
+
 function codeBlock(code: string): string {
   return `<p style="font-size:28px;font-weight:bold;letter-spacing:6px">${escapeHtml(code)}</p>`;
 }
@@ -33,5 +64,10 @@ function layout(body: string): string {
 }
 
 export function renderEmail(job: EmailJob): RenderedEmail {
-  return verifyEmail[job.locale](job.data);
+  switch (job.template) {
+    case 'verify-email':
+      return verifyEmail[job.locale](job.data);
+    case 'reset-password':
+      return resetPassword[job.locale](job.data);
+  }
 }

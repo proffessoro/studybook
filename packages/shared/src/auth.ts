@@ -82,3 +82,14 @@ export const Me = z
   })
   .meta({ id: 'Me' });
 export type Me = z.infer<typeof Me>;
+
+export const RecoverInput = z.object({ email: Email }).meta({ id: 'RecoverInput' });
+export type RecoverInput = z.input<typeof RecoverInput>;
+
+export const ResetPasswordInput = z
+  .object({
+    token: z.string().min(20).max(100),
+    password: Password,
+  })
+  .meta({ id: 'ResetPasswordInput' });
+export type ResetPasswordInput = z.input<typeof ResetPasswordInput>;

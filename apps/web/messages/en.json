@@ -97,7 +97,8 @@
       "network": "Can't reach the server. Check your connection and try again.",
       "unknown": "Something went wrong. Please try again.",
       "INVALID_CREDENTIALS": "Wrong email or password.",
-      "ACCOUNT_SUSPENDED": "This account is suspended. Contact the administrator of this server."
+      "ACCOUNT_SUSPENDED": "This account is suspended. Contact the administrator of this server.",
+      "RESET_LINK_INVALID": "This link has expired or was already used."
     }
   },
   "Login": {
@@ -109,6 +110,28 @@
     "fillBoth": "Enter your email and password.",
     "notVerified": "Your email isn't verified yet. Enter the code we emailed you, or ask for a new one.",
     "verifyNow": "Verify my email",
-    "noAccount": "No account yet? <link>Sign up</link>"
+    "noAccount": "No account yet? <link>Sign up</link>",
+    "forgot": "Forgot your password?"
+  },
+  "ForgotPassword": {
+    "title": "Forgot your password?",
+    "intro": "Enter your account's email. We'll send you a link to choose a new password.",
+    "email": "Email",
+    "submit": "Send the link",
+    "submitting": "Sending…",
+    "sent": "If an account uses {email}, a link is on its way. It expires in 1 hour. Check your spam folder too.",
+    "backToLogin": "Back to log in"
+  },
+  "ResetPassword": {
+    "title": "Choose a new password",
+    "password": "New password",
+    "passwordHint": "At least 8 characters",
+    "submit": "Save my new password",
+    "submitting": "Saving…",
+    "done": "Your password is changed.",
+    "doneNext": "For your safety, you were logged out on every device. Log in with your new password.",
+    "login": "Log in",
+    "linkInvalid": "This link has expired or was already used.",
+    "newLink": "Get a new link"
   }
 }

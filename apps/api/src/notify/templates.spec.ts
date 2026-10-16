@@ -19,4 +19,12 @@ describe('renderEmail', () => {
     expect(html).toContain('&#60;b&#62;ama');
     expect(html).toContain('x=1&#38;y=2');
   });
+
+  it('renders the reset email with its link', () => {
+    const job = { to: 'a@b.cm', locale: 'fr', template: 'reset-password', data: { pseudo: 'ama', link: data.link } } as const;
+    const { subject, text, html } = renderEmail(job);
+    expect(subject).toBe('Réinitialiser votre mot de passe Studybook');
+    expect(text).toContain(data.link);
+    expect(html).toContain('x=1&#38;y=2');
+  });
 });

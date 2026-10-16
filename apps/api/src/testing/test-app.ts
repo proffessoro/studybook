@@ -15,8 +15,9 @@ export class FakeOutbox extends Outbox {
     this.sent.push(job);
   }
 
-  lastTo(email: string): EmailJob | undefined {
-    return this.sent.findLast((job) => job.to === email);
+  /** The latest email of this kind sent to the address. */
+  last<T extends EmailJob['template']>(email: string, template: T): Extract<EmailJob, { template: T }> | undefined {
+    return this.sent.findLast((job): job is Extract<EmailJob, { template: T }> => job.to === email && job.template === template);
   }
 }
 

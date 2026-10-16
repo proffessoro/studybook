@@ -47,3 +47,23 @@ export async function createUser(request: APIRequestContext, { verified = true }
   }
   return { ...user, code };
 }
+
+/** The first link in the latest email to `email` whose subject matches. */
+export async function emailedLink(request: APIRequestContext, email: string, subject: RegExp): Promise<string> {
+  let link = '';
+  await expect
+    .poll(
+      async () => {
+        const res = await request.get(`${MAILPIT}/api/v1/search`, { params: { query: `to:${email}` } });
+        const { messages } = (await res.json()) as { messages: { ID: string; Subject: string }[] };
+        const message = messages.find((m) => subject.test(m.Subject));
+        if (!message) return '';
+        const { Text } = (await (await request.get(`${MAILPIT}/api/v1/message/${message.ID}`)).json()) as { Text: string };
+        link = Text.match(/https?:\/\/\S+/)?.[0] ?? '';
+        return link;
+      },
+      { timeout: 15_000 },
+    )
+    .toMatch(/^https?:\/\//);
+  return link;
+}
