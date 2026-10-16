@@ -14,7 +14,10 @@ import {
 import { LanguageSwitcher } from '@/components/language-switcher';
 
 /** Links shown in the header on wide screens and in the menu sheet on phones. Later steps add to this list. */
-const navItems = [{ href: '/', key: 'home' }] as const;
+const navItems = [
+  { href: '/', key: 'home' },
+  { href: '/signup', key: 'signup' },
+] as const;
 
 export async function SiteHeader() {
   const t = await getTranslations('Nav');
