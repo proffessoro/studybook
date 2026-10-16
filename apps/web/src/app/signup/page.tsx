@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { GoogleButton } from '@/components/google-button';
+import { safeNext } from '@/lib/safe-next';
 import { SignUpForm } from './signup-form';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -8,8 +9,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t('title')} · Studybook` };
 }
 
-export default async function SignUpPage() {
+export default async function SignUpPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const t = await getTranslations('SignUp');
+  const next = safeNext((await searchParams).next);
 
   return (
     <main className="mx-auto flex max-w-md flex-col gap-6 px-4 py-8">
@@ -17,8 +19,8 @@ export default async function SignUpPage() {
         <h1 className="text-2xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">{t('intro')}</p>
       </div>
-      <GoogleButton />
-      <SignUpForm />
+      <GoogleButton next={next} />
+      <SignUpForm next={next} />
     </main>
   );
 }

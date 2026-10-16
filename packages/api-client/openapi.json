@@ -819,6 +819,261 @@
           "groups"
         ]
       }
+    },
+    "/api/v1/groups/{groupId}/invite-link": {
+      "get": {
+        "operationId": "InvitesController_link",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The link to share, e.g. on WhatsApp",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InviteLinkView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "invites"
+        ]
+      }
+    },
+    "/api/v1/groups/{groupId}/invite-link/reset": {
+      "post": {
+        "operationId": "InvitesController_resetLink",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A new link; the old one stopped working",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InviteLinkView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "invites"
+        ]
+      }
+    },
+    "/api/v1/invites/{token}/join": {
+      "post": {
+        "operationId": "InvitesController_join",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Joined, or a request was sent to the leader",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JoinResult"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "invites"
+        ]
+      }
+    },
+    "/api/v1/groups/{groupId}/join-requests": {
+      "get": {
+        "operationId": "InvitesController_requests",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pending requests, oldest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JoinRequestList"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "invites"
+        ]
+      }
+    },
+    "/api/v1/groups/{groupId}/join-requests/{requestId}": {
+      "patch": {
+        "operationId": "InvitesController_decide",
+        "parameters": [
+          {
+            "name": "requestId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideJoinRequestInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Accepted (now a member) or rejected"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "invites"
+        ]
+      }
+    },
+    "/api/v1/invites/{token}": {
+      "get": {
+        "operationId": "InvitePreviewController_preview",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The group behind the link",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitePreview"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "invites"
+        ]
+      }
     }
   },
   "info": {
@@ -854,6 +1109,9 @@
               "GOOGLE_SIGNUP_EXPIRED",
               "GROUP_FULL",
               "GROUP_ARCHIVED",
+              "INVITE_INVALID",
+              "BANNED_FROM_GROUP",
+              "REQUEST_ALREADY_DECIDED",
               "CONFIRMATION_MISMATCH",
               "TASK_DEADLINE_PASSED",
               "TASK_NOT_APPLICABLE",
@@ -1488,6 +1746,173 @@
         },
         "required": [
           "groups"
+        ],
+        "additionalProperties": false
+      },
+      "InviteLinkView": {
+        "$id": "#/components/schemas/InviteLinkView",
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "createdAt"
+        ],
+        "additionalProperties": false
+      },
+      "InvitePreview": {
+        "$id": "#/components/schemas/InvitePreview",
+        "type": "object",
+        "properties": {
+          "groupName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "memberCount": {
+            "type": "number"
+          },
+          "requiresApproval": {
+            "type": "boolean"
+          },
+          "full": {
+            "type": "boolean"
+          },
+          "viewer": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "none",
+              "member",
+              "pending",
+              "banned"
+            ]
+          },
+          "groupId": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "groupName",
+          "description",
+          "memberCount",
+          "requiresApproval",
+          "full",
+          "viewer",
+          "groupId"
+        ],
+        "additionalProperties": false
+      },
+      "JoinResult": {
+        "$id": "#/components/schemas/JoinResult",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "joined",
+              "requested"
+            ]
+          },
+          "groupId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "groupId"
+        ],
+        "additionalProperties": false
+      },
+      "JoinRequestView": {
+        "$id": "#/components/schemas/JoinRequestView",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "catalogue",
+              "invite"
+            ]
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "pseudo": {
+                "type": "string"
+              },
+              "fullName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "phone": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            "required": [
+              "pseudo",
+              "fullName",
+              "email",
+              "phone"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "createdAt",
+          "user"
+        ],
+        "additionalProperties": false
+      },
+      "JoinRequestList": {
+        "$id": "#/components/schemas/JoinRequestList",
+        "type": "object",
+        "properties": {
+          "requests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JoinRequestView"
+            }
+          }
+        },
+        "required": [
+          "requests"
+        ],
+        "additionalProperties": false
+      },
+      "DecideJoinRequestInput": {
+        "$id": "#/components/schemas/DecideJoinRequestInput",
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "accept",
+              "reject"
+            ]
+          }
+        },
+        "required": [
+          "decision"
         ],
         "additionalProperties": false
       },

@@ -114,7 +114,11 @@
       "GOOGLE_SIGNUP_EXPIRED": "Cette étape a expiré. Recommencez avec Google.",
       "GROUP_ARCHIVED": "Ce groupe est archivé, rien ne peut être modifié.",
       "FORBIDDEN": "Vous n'avez pas le droit de faire ceci.",
-      "NOT_FOUND": "Cette page n'existe plus."
+      "NOT_FOUND": "Cette page n'existe plus.",
+      "GROUP_FULL": "Ce groupe est complet.",
+      "INVITE_INVALID": "Ce lien d'invitation ne fonctionne plus.",
+      "BANNED_FROM_GROUP": "Vous ne pouvez pas rejoindre ce groupe.",
+      "REQUEST_ALREADY_DECIDED": "Cette demande a déjà reçu une réponse."
     }
   },
   "Login": {
@@ -235,5 +239,42 @@
     "deleteConfirm": "Pour supprimer, tapez le nom du groupe : {name}",
     "delete": "Supprimer définitivement le groupe",
     "deleteMismatch": "Le nom ne correspond pas."
+  },
+  "Join": {
+    "invitedTo": "Vous êtes invité à rejoindre",
+    "memberCount": "{count, plural, one {# membre} other {# membres}}",
+    "loggedOut": "Créez un compte ou connectez-vous pour rejoindre. Vous reviendrez ici ensuite.",
+    "signUp": "Créer un compte",
+    "logIn": "J'ai déjà un compte",
+    "join": "Rejoindre le groupe",
+    "askToJoin": "Demander à rejoindre",
+    "approvalNeeded": "Le responsable valide les nouveaux membres.",
+    "pending": "Votre demande est envoyée. Vous serez dans le groupe dès que le responsable l’acceptera.",
+    "full": "Ce groupe est complet.",
+    "banned": "Vous ne pouvez pas rejoindre ce groupe.",
+    "invalidTitle": "Ce lien d'invitation ne fonctionne plus",
+    "invalidText": "Le responsable l’a peut-être réinitialisé. Demandez-lui le nouveau lien."
+  },
+  "Invite": {
+    "title": "Inviter des personnes",
+    "hint": "Toute personne ayant ce lien peut rejoindre (ou le demander, si vous validez les nouveaux membres).",
+    "linkLabel": "Lien d'invitation",
+    "copy": "Copier le lien",
+    "copied": "Copié",
+    "copyFailed": "La copie n'a pas fonctionné. Sélectionnez le lien et copiez-le à la main.",
+    "whatsapp": "Partager sur WhatsApp",
+    "shareText": "Rejoins « {name} » sur Studybook : {url}",
+    "reset": "Réinitialiser le lien",
+    "resetConfirm": "Le lien actuel ne fonctionnera plus, y compris pour les personnes à qui vous l’avez déjà envoyé.",
+    "resetYes": "Réinitialiser",
+    "cancel": "Annuler",
+    "resetDone": "Nouveau lien prêt. L'ancien ne fonctionne plus."
+  },
+  "JoinRequests": {
+    "title": "{count, plural, one {# personne veut rejoindre} other {# personnes veulent rejoindre}}",
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "acceptLabel": "Accepter {pseudo}",
+    "rejectLabel": "Refuser {pseudo}"
   }
 }

@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { type FieldErrors, fieldErrorsOf, useApiErrorMessages } from '@/lib/api-errors';
 
-export function SignUpForm() {
+export function SignUpForm({ next }: { next: string }) {
   const t = useTranslations('SignUp');
   const messages = useApiErrorMessages();
   const router = useRouter();
@@ -40,7 +40,7 @@ export function SignUpForm() {
         },
       });
       if (data) {
-        router.push(`/verify-email?${new URLSearchParams({ email: data.email, sent: '1' })}`);
+        router.push(`/verify-email?${new URLSearchParams({ email: data.email, sent: '1', next })}`);
         return;
       }
       const fields = fieldErrorsOf(error);

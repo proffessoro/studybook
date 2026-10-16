@@ -114,7 +114,11 @@
       "GOOGLE_SIGNUP_EXPIRED": "This step has expired. Please start again with Google.",
       "GROUP_ARCHIVED": "This group is archived, so nothing can be changed.",
       "FORBIDDEN": "You're not allowed to do this.",
-      "NOT_FOUND": "This page no longer exists."
+      "NOT_FOUND": "This page no longer exists.",
+      "GROUP_FULL": "This group is full.",
+      "INVITE_INVALID": "This invite link no longer works.",
+      "BANNED_FROM_GROUP": "You can't join this group.",
+      "REQUEST_ALREADY_DECIDED": "This request was already answered."
     }
   },
   "Login": {
@@ -235,5 +239,42 @@
     "deleteConfirm": "To delete, type the group name: {name}",
     "delete": "Delete the group for good",
     "deleteMismatch": "The name does not match."
+  },
+  "Join": {
+    "invitedTo": "You're invited to join",
+    "memberCount": "{count, plural, one {# member} other {# members}}",
+    "loggedOut": "Create an account or log in to join. You will come back here after.",
+    "signUp": "Create an account",
+    "logIn": "I already have an account",
+    "join": "Join the group",
+    "askToJoin": "Ask to join",
+    "approvalNeeded": "The leader approves new members.",
+    "pending": "Your request was sent. You will be in the group once the leader accepts it.",
+    "full": "This group is full.",
+    "banned": "You can't join this group.",
+    "invalidTitle": "This invite link no longer works",
+    "invalidText": "The leader may have reset it. Ask them for the new link."
+  },
+  "Invite": {
+    "title": "Invite people",
+    "hint": "Anyone with this link can join (or ask to, if you approve new members).",
+    "linkLabel": "Invite link",
+    "copy": "Copy the link",
+    "copied": "Copied",
+    "copyFailed": "Copying did not work. Select the link and copy it by hand.",
+    "whatsapp": "Share on WhatsApp",
+    "shareText": "Join \"{name}\" on Studybook: {url}",
+    "reset": "Reset the link",
+    "resetConfirm": "The current link will stop working, including for people you already sent it to.",
+    "resetYes": "Reset",
+    "cancel": "Cancel",
+    "resetDone": "New link ready. The old one no longer works."
+  },
+  "JoinRequests": {
+    "title": "{count, plural, one {# person wants to join} other {# people want to join}}",
+    "accept": "Accept",
+    "reject": "Refuse",
+    "acceptLabel": "Accept {pseudo}",
+    "rejectLabel": "Refuse {pseudo}"
   }
 }
