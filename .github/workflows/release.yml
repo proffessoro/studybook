@@ -1,13 +1,12 @@
 # Builds the production images and pushes them to GHCR (design §7).
 # Each image gets two tags: `latest` and the commit SHA (for pinning and rollback).
-# Pull requests into main only build the images, to catch a broken build before merging.
+# Pull requests only build the images, to catch a broken build before merging.
 name: Release images
 
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
