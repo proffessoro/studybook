@@ -1,10 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
-import type { InstanceInfo } from '@studybook/shared';
+import { ApiTags } from '@nestjs/swagger';
+import { InstanceInfo } from '@studybook/shared';
+import { ApiZodResponse } from '../openapi/zod-openapi.js';
 
+@ApiTags('instance')
 @Controller('instance')
 export class InstanceController {
   /** Lets clients (and the Phase 3 app) check that a server address is a Studybook instance. */
   @Get()
+  @ApiZodResponse(200, InstanceInfo, 'Instance name, version, and enabled features')
   info(): InstanceInfo {
     return {
       name: process.env.INSTANCE_NAME ?? 'Studybook',

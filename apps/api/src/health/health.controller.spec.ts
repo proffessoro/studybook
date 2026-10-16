@@ -3,6 +3,7 @@ import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fa
 import request from 'supertest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ErrorCode } from '@studybook/shared';
+import { configureApp } from '../app.setup.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { HealthController } from './health.controller.js';
 
@@ -12,8 +13,7 @@ async function createApp(queryRaw: () => Promise<unknown>) {
     providers: [{ provide: PrismaService, useValue: { $queryRaw: vi.fn(queryRaw) } }],
   }).compile();
 
-  const app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
-  app.setGlobalPrefix('api/v1');
+  const app = configureApp(moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter()));
   await app.init();
   await app.getHttpAdapter().getInstance().ready();
   return app;

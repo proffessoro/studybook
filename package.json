@@ -14,7 +14,8 @@
     "db:up": "docker compose -f deploy/docker-compose.dev.yml up -d",
     "db:down": "docker compose -f deploy/docker-compose.dev.yml down",
     "lint": "turbo run lint",
-    "test:e2e": "pnpm --filter @studybook/web test:e2e"
+    "test:e2e": "pnpm --filter @studybook/web test:e2e",
+    "api:generate": "pnpm --filter @studybook/api build && pnpm --filter @studybook/api openapi && pnpm --filter @studybook/api-client generate"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
