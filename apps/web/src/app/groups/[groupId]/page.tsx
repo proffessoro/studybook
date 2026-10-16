@@ -3,11 +3,12 @@ import Link from 'next/link';
 import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { SettingsIcon } from 'lucide-react';
+import { SettingsIcon, UsersIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getGroup, getInviteLink, getJoinRequests, getMe } from '@/lib/server-api';
 import { InvitePanel } from './invite-panel';
 import { JoinRequests } from './join-requests';
+import { LeaveGroup } from './leave-group';
 
 type Props = { params: Promise<{ groupId: string }> };
 
@@ -55,8 +56,15 @@ export default async function GroupPage({ params }: Props) {
         )}
       </div>
       {group.description && <p className="whitespace-pre-line">{group.description}</p>}
+      <Button variant="outline" className="self-start" asChild>
+        <Link href={`/groups/${group.id}/members`}>
+          <UsersIcon aria-hidden />
+          {t('membersLink', { count: group.memberCount })}
+        </Link>
+      </Button>
       {manages && <JoinRequests groupId={group.id} requests={requests} />}
       {invite && <InvitePanel groupId={group.id} groupName={group.name} token={invite.token} origin={origin} />}
+      {group.myRole !== 'leader' && <LeaveGroup groupId={group.id} />}
     </main>
   );
 }

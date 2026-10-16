@@ -86,3 +86,14 @@ export async function getJoinRequests(groupId: string) {
   });
   return data?.requests ?? [];
 }
+
+/** The group's active members as the logged-in user may see them (contacts for the leader only). */
+export async function getMembers(groupId: string) {
+  const { client, cookieHeader } = await serverApi();
+  const { data } = await client.GET('/api/v1/groups/{groupId}/members', {
+    params: { path: { groupId } },
+    headers: { cookie: cookieHeader },
+    cache: 'no-store',
+  });
+  return data?.members ?? [];
+}

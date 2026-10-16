@@ -118,7 +118,9 @@
       "GROUP_FULL": "Ce groupe est complet.",
       "INVITE_INVALID": "Ce lien d'invitation ne fonctionne plus.",
       "BANNED_FROM_GROUP": "Vous ne pouvez pas rejoindre ce groupe.",
-      "REQUEST_ALREADY_DECIDED": "Cette demande a déjà reçu une réponse."
+      "REQUEST_ALREADY_DECIDED": "Cette demande a déjà reçu une réponse.",
+      "LEADER_MUST_TRANSFER": "Transmettez la responsabilité à un autre membre avant de partir.",
+      "CANNOT_MANAGE_LEADER": "Le responsable peut seulement transmettre la responsabilité."
     }
   },
   "Login": {
@@ -209,7 +211,8 @@
     "languageLabel": "Langue du groupe",
     "languageLabelHint": "Affichée comme une étiquette, par ex. « Français » ou « English ». Chaque membre voit Studybook dans sa propre langue.",
     "createSubmit": "Créer le groupe",
-    "creating": "Création…"
+    "creating": "Création…",
+    "membersLink": "Membres ({count})"
   },
   "GroupSettings": {
     "title": "Paramètres du groupe",
@@ -276,5 +279,29 @@
     "reject": "Refuser",
     "acceptLabel": "Accepter {pseudo}",
     "rejectLabel": "Refuser {pseudo}"
+  },
+  "Members": {
+    "title": "Membres",
+    "you": "vous",
+    "actionsFor": "Actions pour {pseudo}",
+    "makeModerator": "Nommer modérateur",
+    "makeMember": "Repasser membre",
+    "transfer": "Transmettre la responsabilité",
+    "transferTitle": "Transmettre la responsabilité à {pseudo}",
+    "transferConfirm": "{pseudo} devient responsable, avec tous les droits. Vous restez dans le groupe comme modérateur.",
+    "transferYes": "Transmettre",
+    "remove": "Retirer du groupe",
+    "removeTitle": "Retirer {pseudo}",
+    "removeConfirm": "{pseudo} quitte le groupe. Il pourra revenir avec le lien d'invitation.",
+    "removeYes": "Retirer",
+    "ban": "Bannir du groupe",
+    "banTitle": "Bannir {pseudo}",
+    "banConfirm": "{pseudo} quitte le groupe et ne pourra plus revenir, ni par le lien ni par une demande.",
+    "banYes": "Bannir",
+    "cancel": "Annuler",
+    "leave": "Quitter le groupe",
+    "leaveTitle": "Quitter le groupe",
+    "leaveConfirm": "Vous ne verrez plus le groupe. Vos preuves passées restent visibles pour le responsable.",
+    "leaveYes": "Quitter"
   }
 }

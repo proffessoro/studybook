@@ -10,6 +10,8 @@ const everyone = [LEADER, MODERATOR, MEMBER] as const;
  */
 export const permissions = {
   'group.view': { roles: everyone, writes: false },
+  /** Anyone but the leader, who hands over first (MEM-05) */
+  'group.leave': { roles: everyone, writes: false },
   'group.update': { roles: [LEADER], writes: true },
   'group.archive': { roles: [LEADER], writes: false },
   'group.delete': { roles: [LEADER], writes: false },
@@ -17,6 +19,7 @@ export const permissions = {
   'member.list': { roles: everyone, writes: false },
   'member.contacts.view': { roles: [LEADER], writes: false },
   'member.manage': { roles: [LEADER], writes: true },
+  'leadership.transfer': { roles: [LEADER], writes: true },
   'invite.manage': { roles: [LEADER], writes: true },
   'joinRequest.manage': { roles: [LEADER], writes: true },
   'content.manage': { roles: [LEADER, MODERATOR], writes: true },

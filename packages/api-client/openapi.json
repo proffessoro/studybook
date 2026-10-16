@@ -1074,6 +1074,234 @@
           "invites"
         ]
       }
+    },
+    "/api/v1/groups/{groupId}/members": {
+      "get": {
+        "operationId": "MembersController_list",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active members; contacts only for the leader",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberList"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "members"
+        ]
+      }
+    },
+    "/api/v1/groups/{groupId}/members/{userId}": {
+      "patch": {
+        "operationId": "MembersController_changeRole",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeRoleInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Role changed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "members"
+        ]
+      },
+      "delete": {
+        "operationId": "MembersController_remove",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveMemberInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Removed (or banned)"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "members"
+        ]
+      }
+    },
+    "/api/v1/groups/{groupId}/transfer-leadership": {
+      "post": {
+        "operationId": "MembersController_transfer",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferLeadershipInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "The member is the new leader; you are now a moderator"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "members"
+        ]
+      }
+    },
+    "/api/v1/groups/{groupId}/leave": {
+      "post": {
+        "operationId": "MembersController_leave",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "You left the group"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "members"
+        ]
+      }
     }
   },
   "info": {
@@ -1112,6 +1340,8 @@
               "INVITE_INVALID",
               "BANNED_FROM_GROUP",
               "REQUEST_ALREADY_DECIDED",
+              "LEADER_MUST_TRANSFER",
+              "CANNOT_MANAGE_LEADER",
               "CONFIRMATION_MISMATCH",
               "TASK_DEADLINE_PASSED",
               "TASK_NOT_APPLICABLE",
@@ -1913,6 +2143,119 @@
         },
         "required": [
           "decision"
+        ],
+        "additionalProperties": false
+      },
+      "MemberView": {
+        "$id": "#/components/schemas/MemberView",
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "pseudo": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "leader",
+              "moderator",
+              "member"
+            ]
+          },
+          "contact": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "fullName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "phone": {
+                "nullable": true,
+                "type": "string"
+              },
+              "joinedAt": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "fullName",
+              "email",
+              "phone",
+              "joinedAt"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "userId",
+          "pseudo",
+          "role",
+          "contact"
+        ],
+        "additionalProperties": false
+      },
+      "MemberList": {
+        "$id": "#/components/schemas/MemberList",
+        "type": "object",
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberView"
+            }
+          }
+        },
+        "required": [
+          "members"
+        ],
+        "additionalProperties": false
+      },
+      "ChangeRoleInput": {
+        "$id": "#/components/schemas/ChangeRoleInput",
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "moderator",
+              "member"
+            ]
+          }
+        },
+        "required": [
+          "role"
+        ],
+        "additionalProperties": false
+      },
+      "TransferLeadershipInput": {
+        "$id": "#/components/schemas/TransferLeadershipInput",
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId"
+        ],
+        "additionalProperties": false
+      },
+      "RemoveMemberInput": {
+        "$id": "#/components/schemas/RemoveMemberInput",
+        "type": "object",
+        "properties": {
+          "ban": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ban"
         ],
         "additionalProperties": false
       },
