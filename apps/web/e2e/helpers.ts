@@ -1,3 +1,5 @@
+import { execSync } from 'node:child_process';
+import path from 'node:path';
 import { type APIRequestContext, expect } from '@playwright/test';
 
 /**
@@ -6,6 +8,21 @@ import { type APIRequestContext, expect } from '@playwright/test';
  */
 const MAILPIT = process.env.MAILPIT_URL ?? 'http://localhost:8025';
 export const PASSWORD = 'correct horse';
+
+// Playwright runs from apps/web.
+const devCompose = path.resolve('../../deploy/docker-compose.dev.yml');
+
+/**
+ * The suite signs up more users from one IP than the real limits allow
+ * (10 verification emails a day per IP), so test sign-ups clear the
+ * rate-limit counters in the development Valkey first.
+ */
+export function resetRateLimits(): void {
+  execSync(
+    `docker compose -f "${devCompose}" exec -T valkey sh -c "valkey-cli --scan --pattern 'rl:*' | xargs -r valkey-cli del"`,
+    { stdio: 'pipe' },
+  );
+}
 
 /** Random values, so parallel tests and earlier runs don't collide. Test users end in @e2e.test. */
 export function uniqueUser() {
@@ -37,6 +54,7 @@ export async function emailedCode(request: APIRequestContext, email: string): Pr
 /** Signs up through the API and, unless told otherwise, verifies the email. */
 export async function createUser(request: APIRequestContext, { verified = true } = {}) {
   const user = uniqueUser();
+  resetRateLimits();
   const res = await request.post('/api/v1/auth/signup', {
     data: { fullName: 'Test E2E', ...user, password: PASSWORD, locale: 'fr', acceptPrivacy: true },
   });
@@ -66,4 +84,11 @@ export async function emailedLink(request: APIRequestContext, email: string, sub
     )
     .toMatch(/^https?:\/\//);
   return link;
+}
+
+/** Subjects of every email sent to `email`, newest first. */
+export async function emailedSubjects(request: APIRequestContext, email: string): Promise<string[]> {
+  const res = await request.get(`${MAILPIT}/api/v1/search`, { params: { query: `to:${email}` } });
+  const { messages } = (await res.json()) as { messages: { Subject: string }[] };
+  return messages.map((m) => m.Subject);
 }

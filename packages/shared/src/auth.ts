@@ -93,3 +93,32 @@ export const ResetPasswordInput = z
   })
   .meta({ id: 'ResetPasswordInput' });
 export type ResetPasswordInput = z.input<typeof ResetPasswordInput>;
+
+/** ACC-06. Only the fields sent are changed. Email has its own flow, since the new address must be verified. */
+export const UpdateProfileInput = z
+  .object({
+    fullName: z.string().trim().min(2).max(100),
+    pseudo: Pseudo,
+    phone: CameroonPhone,
+    locale: Locale,
+  })
+  .partial()
+  .meta({ id: 'UpdateProfileInput' });
+export type UpdateProfileInput = z.input<typeof UpdateProfileInput>;
+
+/** Asks for the current password, so someone at an unlocked device can't move the account to their own email. */
+export const ChangeEmailInput = z
+  .object({
+    newEmail: Email,
+    password: z.string().min(1).max(128),
+  })
+  .meta({ id: 'ChangeEmailInput' });
+export type ChangeEmailInput = z.input<typeof ChangeEmailInput>;
+
+export const ChangeEmailResult = z.object({ newEmail: z.string() }).meta({ id: 'ChangeEmailResult' });
+export type ChangeEmailResult = z.infer<typeof ChangeEmailResult>;
+
+export const ConfirmEmailChangeInput = z
+  .object({ code: z.string().regex(/^\d{6}$/) })
+  .meta({ id: 'ConfirmEmailChangeInput' });
+export type ConfirmEmailChangeInput = z.input<typeof ConfirmEmailChangeInput>;

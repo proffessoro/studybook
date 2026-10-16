@@ -23,7 +23,7 @@ import { Sessions } from './sessions.js';
 import { VerificationCodes } from './verification-codes.js';
 
 /** An unverified sign-up stops holding its pseudo and phone after this long. */
-const PENDING_HOLD_MS = 24 * 3600 * 1000;
+export const PENDING_HOLD_MS = 24 * 3600 * 1000;
 
 /**
  * Failed logins: 5 per 15 min for one account from one IP (design §5.6), and
@@ -49,7 +49,7 @@ function recoverLimits(email: string, ip: string): Limit[] {
 let dummyHash: Promise<string> | undefined;
 
 /** Verification emails: 3 per hour per address, 10 per day per IP (design §5.6). */
-function emailLimits(email: string, ip: string): Limit[] {
+export function emailLimits(email: string, ip: string): Limit[] {
   return [
     { key: `verify-email:addr:${email}`, max: 3, windowSeconds: 3600 },
     { key: `verify-email:ip:${ip}`, max: 10, windowSeconds: 24 * 3600 },

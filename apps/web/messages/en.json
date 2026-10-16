@@ -11,7 +11,8 @@
     "signup": "Sign up",
     "login": "Log in",
     "logout": "Log out",
-    "account": "Account of {pseudo}"
+    "account": "Account of {pseudo}",
+    "profile": "My profile"
   },
   "LanguageSwitcher": {
     "label": "Change language",
@@ -87,6 +88,11 @@
       },
       "acceptPrivacy": {
         "invalid_value": "You need to accept the privacy policy to create an account."
+      },
+      "newEmail": {
+        "invalid_format": "Enter a valid email address.",
+        "taken": "An account already uses this email.",
+        "same": "This is already your email."
       }
     },
     "api": {
@@ -98,7 +104,8 @@
       "unknown": "Something went wrong. Please try again.",
       "INVALID_CREDENTIALS": "Wrong email or password.",
       "ACCOUNT_SUSPENDED": "This account is suspended. Contact the administrator of this server.",
-      "RESET_LINK_INVALID": "This link has expired or was already used."
+      "RESET_LINK_INVALID": "This link has expired or was already used.",
+      "WRONG_PASSWORD": "This password is wrong."
     }
   },
   "Login": {
@@ -133,5 +140,25 @@
     "login": "Log in",
     "linkInvalid": "This link has expired or was already used.",
     "newLink": "Get a new link"
+  },
+  "Profile": {
+    "title": "My profile",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "Your changes are saved.",
+    "emailHeading": "Email",
+    "currentEmail": "Your email:",
+    "changeEmail": "Change email",
+    "newEmail": "New email",
+    "currentPassword": "Current password",
+    "currentPasswordHint": "To make sure it is really you",
+    "sendCode": "Send a code",
+    "cancel": "Cancel",
+    "codeSent": "We sent a 6-digit code to {email}. Your email changes once you enter it.",
+    "code": "Code",
+    "codeFormat": "The code has 6 digits.",
+    "confirmEmail": "Confirm my new email",
+    "startAgain": "Use another address",
+    "emailChanged": "Your email is now"
   }
 }

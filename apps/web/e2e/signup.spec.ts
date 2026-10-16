@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test';
-import { createUser, emailedCode, uniqueUser } from './helpers';
+import { createUser, emailedCode, resetRateLimits, uniqueUser } from './helpers';
 
 test.describe('sign-up', () => {
   test.use({ locale: 'fr-FR' });
 
   test('a new user signs up and verifies their email with the code', async ({ page, request }) => {
     const user = uniqueUser();
+    resetRateLimits();
     await page.goto('/signup');
 
     await page.getByLabel('Nom complet').fill('Test E2E');

@@ -11,7 +11,8 @@
     "signup": "S'inscrire",
     "login": "Se connecter",
     "logout": "Se déconnecter",
-    "account": "Compte de {pseudo}"
+    "account": "Compte de {pseudo}",
+    "profile": "Mon profil"
   },
   "LanguageSwitcher": {
     "label": "Changer de langue",
@@ -87,6 +88,11 @@
       },
       "acceptPrivacy": {
         "invalid_value": "Vous devez accepter la politique de confidentialité pour créer un compte."
+      },
+      "newEmail": {
+        "invalid_format": "Saisissez une adresse email valide.",
+        "taken": "Un compte utilise déjà cet email.",
+        "same": "C'est déjà votre email."
       }
     },
     "api": {
@@ -98,7 +104,8 @@
       "unknown": "Un problème est survenu. Veuillez réessayer.",
       "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
       "ACCOUNT_SUSPENDED": "Ce compte est suspendu. Contactez l'administrateur de ce serveur.",
-      "RESET_LINK_INVALID": "Ce lien a expiré ou a déjà été utilisé."
+      "RESET_LINK_INVALID": "Ce lien a expiré ou a déjà été utilisé.",
+      "WRONG_PASSWORD": "Ce mot de passe est incorrect."
     }
   },
   "Login": {
@@ -133,5 +140,25 @@
     "login": "Se connecter",
     "linkInvalid": "Ce lien a expiré ou a déjà été utilisé.",
     "newLink": "Recevoir un nouveau lien"
+  },
+  "Profile": {
+    "title": "Mon profil",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Vos modifications sont enregistrées.",
+    "emailHeading": "Email",
+    "currentEmail": "Votre email :",
+    "changeEmail": "Changer d'email",
+    "newEmail": "Nouvel email",
+    "currentPassword": "Mot de passe actuel",
+    "currentPasswordHint": "Pour vérifier qu'il s'agit bien de vous",
+    "sendCode": "Envoyer un code",
+    "cancel": "Annuler",
+    "codeSent": "Nous avons envoyé un code à 6 chiffres à {email}. Votre email change dès que vous le saisissez.",
+    "code": "Code",
+    "codeFormat": "Le code comporte 6 chiffres.",
+    "confirmEmail": "Confirmer mon nouvel email",
+    "startAgain": "Utiliser une autre adresse",
+    "emailChanged": "Votre email est maintenant"
   }
 }
